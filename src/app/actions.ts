@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 import { refactorCode } from '@/ai/flows/refactor-code';
+import { redirect } from 'next/navigation';
 
 type Issue = {
   title: string;
@@ -10,7 +11,7 @@ type Issue = {
   severity: 'High' | 'Medium' | 'Low';
 };
 
-type AnalysisResult = {
+export type AnalysisResult = {
   score: number;
   issues: Issue[];
   explanation: string;
@@ -31,10 +32,10 @@ export type RefactorState = {
   error?: string;
 };
 
-const codeSchema = z.string().min(10, 'Code must be at least 10 characters long.');
+export const codeSchema = z.string().min(10, 'Code must be at least 10 characters long.');
 
 // A mock function to simulate AST analysis and scoring
-const mockAstAnalysis = (code: string): { score: number, issues: Issue[] } => {
+export const mockAstAnalysis = (code: string): { score: number, issues: Issue[] } => {
   // Simple logic to generate a score and some issues based on code characteristics
   const lines = code.split('\n').length;
   const complexityMatch = (code.match(/(if|for|while|case)/g) || []).length;
@@ -105,33 +106,7 @@ export async function analyzeCode(
   
   const validatedCode = validation.data;
 
-  try {
-    // 1. Static Analysis Layer (Mocked)
-    const { score, issues } = mockAstAnalysis(validatedCode);
-
-    // 2. Heuristic Layer (GenAI)
-    const detailedAnalysis = `Technical Debt Score: ${score}/100. Issues found: ${JSON.stringify(issues, null, 2)}`;
-    const aiResponse = await generateCodeExplanations({
-      code: validatedCode,
-      analysis: detailedAnalysis,
-    });
-
-    if (!aiResponse.explanation) {
-      return { status: 'error', error: 'AI failed to generate an explanation.' };
-    }
-
-    return {
-      status: 'success',
-      result: {
-        score,
-        issues,
-        explanation: aiResponse.explanation
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return { status: 'error', error: 'An unexpected error occurred during analysis.' };
-  }
+  redirect(`/analyzer/results?code=${encodeURIComponent(validatedCode)}`);
 }
 
 export async function getRefactoredCode(
