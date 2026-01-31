@@ -4,7 +4,7 @@ import { useState, useMemo, type FC, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { getRefactoredCode } from '@/app/actions';
 import type { RefactorState, AnalysisResult } from '@/lib/types';
-import { AlertTriangle, Bot, CheckCircle, Code, Copy, FileCode2, Github, Loader2, ShieldCheck, Sparkles, Wand2, XCircle } from 'lucide-react';
+import { AlertTriangle, Bot, CheckCircle, Code, Copy, Diamond, FileCode2, Github, Loader2, Sparkles, Wand2, XCircle } from 'lucide-react';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
 import {
   Accordion,
@@ -282,6 +282,15 @@ export default function ResultsView({ code, analysisResult }: ResultsViewProps) 
                           <input type="hidden" name="analysis" value={JSON.stringify(analysisResult.issues)} />
                           <AutoRefactorButton />
                         </form>
+                        <div className="mt-6 border-t border-border/50 pt-4">
+                            <p className="text-center text-sm text-muted-foreground mb-2">Feeling ambitious?</p>
+                            <Button asChild className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity">
+                                <Link href={`/analyzer/perfect-code?code=${encodeURIComponent(code)}`}>
+                                    <Diamond className="mr-2 h-4 w-4" />
+                                    Generate 100% Perfect Code
+                                </Link>
+                            </Button>
+                        </div>
                     </CardContent>
                   </Card>
 
