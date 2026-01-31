@@ -33,19 +33,30 @@ export async function generateCodeExplanations(input: GenerateCodeExplanationsIn
 const prompt = ai.definePrompt({
   name: 'generateCodeExplanationsPrompt',
   input: {schema: GenerateCodeExplanationsInputSchema},
-  output: {schema: GenerateCodeExplanationsOutputSchema},
   prompt: `You are an AI assistant that helps developers understand code refactoring suggestions.
 
   Given a code block and its analysis, your task is to generate a human-readable explanation of the refactoring suggestions.
   The explanation should be clear, concise, and easy to understand for developers of all skill levels.
 
   Code Block:
+  \`\`\`
   {{code}}
+  \`\`\`
 
   Analysis:
   {{analysis}}
 
-  Explanation:`,
+  Respond with ONLY a valid JSON object that conforms to the following schema:
+  {
+    "type": "object",
+    "properties": {
+      "explanation": {
+        "type": "string",
+        "description": "A human-readable explanation of the refactoring suggestions."
+      }
+    },
+    "required": ["explanation"]
+  }`,
 });
 
 const generateCodeExplanationsFlow = ai.defineFlow(
@@ -55,7 +66,15 @@ const generateCodeExplanationsFlow = ai.defineFlow(
     outputSchema: GenerateCodeExplanationsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    const jsonString = response.text;
+    try {
+      // The model might return the JSON string wrapped in markdown
+      const cleanedJsonString = jsonString.replace(/^```json\n/, '').replace(/\n```$/, '');
+      return JSON.parse(cleanedJsonString);
+    } catch (e) {
+      console.error("Failed to parse JSON from model response:", jsonString);
+      throw new Error("AI returned an invalid response format.");
+    }
   }
 );

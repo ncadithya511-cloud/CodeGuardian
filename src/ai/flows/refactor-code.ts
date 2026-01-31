@@ -34,7 +34,6 @@ export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCo
 const prompt = ai.definePrompt({
   name: 'refactorCodePrompt',
   input: {schema: RefactorCodeInputSchema},
-  output: {schema: RefactorCodeOutputSchema},
   prompt: `You are an expert software engineer specializing in code refactoring and optimization.
 
   Given a code block and an analysis of its issues, your task is to refactor the code to address the identified problems.
@@ -42,15 +41,28 @@ const prompt = ai.definePrompt({
   The refactored code should be functionally equivalent to the original but improved in terms of performance, readability, and maintainability.
 
   Original Code Block:
-  \`\`\`javascript
+  \`\`\`
   {{code}}
   \`\`\`
 
   Analysis of Issues (in JSON format):
   {{analysis}}
 
-  Please provide the refactored code and an explanation of the changes.
-  `,
+  Respond with ONLY a valid JSON object that conforms to the following schema:
+  {
+    "type": "object",
+    "properties": {
+      "refactoredCode": {
+        "type": "string",
+        "description": "The refactored code block."
+      },
+      "explanation": {
+        "type": "string",
+        "description": "A brief explanation of the changes made during refactoring."
+      }
+    },
+    "required": ["refactoredCode", "explanation"]
+  }`,
 });
 
 const refactorCodeFlow = ai.defineFlow(
@@ -60,7 +72,14 @@ const refactorCodeFlow = ai.defineFlow(
     outputSchema: RefactorCodeOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    const jsonString = response.text;
+    try {
+      const cleanedJsonString = jsonString.replace(/^```json\n/, '').replace(/\n```$/, '');
+      return JSON.parse(cleanedJsonString);
+    } catch (e) {
+      console.error("Failed to parse JSON from model response:", jsonString);
+      throw new Error("AI returned an invalid response format.");
+    }
   }
 );
