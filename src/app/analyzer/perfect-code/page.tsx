@@ -6,15 +6,11 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import type { GeneratePerfectCodeOutput } from '@/ai/flows/generate-perfect-code';
+import { generatePerfectCode } from '@/ai/flows/generate-perfect-code';
 
 async function performPerfection(code: string): Promise<GeneratePerfectCodeOutput> {
-    // AI feature is currently disabled due to errors.
-    return {
-      perfectCode: `// AI "perfect code" generation is temporarily disabled.
-// This is a placeholder.
-${code}`,
-      explanation: "The AI-powered 'perfect code' generation is temporarily unavailable. We are working to resolve the issue with the AI service. The best code is code that works, is maintainable, and is understood by your team. Keep striving for those qualities!"
-    };
+    const result = await generatePerfectCode({ code });
+    return result;
 }
 
 export default function PerfectCodePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {

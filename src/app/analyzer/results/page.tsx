@@ -6,11 +6,15 @@ import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
-    // AI feature is currently disabled due to errors.
-    const explanation = "The AI-powered explanation is temporarily unavailable. Based on the static analysis, your code has some areas for improvement. The identified issues highlight potential problems with complexity and efficiency that you should address.";
+    
+    const { explanation } = await generateCodeExplanations({
+        code,
+        analysis: JSON.stringify(issues),
+    });
 
     return {
         score,
