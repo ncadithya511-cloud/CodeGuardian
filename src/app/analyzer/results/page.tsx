@@ -52,7 +52,7 @@ export default function ResultsPage({ searchParams }: { searchParams: { [key: st
     return (
         <main className="flex-1 p-4 md:p-8">
             <Suspense fallback={<LoadingState />}>
-                {/* @ts-ignore-error Server Component */}
+                {/* @ts-expect-error Async Server Component */}
                 <AnalysisResults code={validation.data} />
             </Suspense>
         </main>

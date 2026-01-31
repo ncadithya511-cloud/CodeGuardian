@@ -42,7 +42,7 @@ export default function PerfectCodePage({ searchParams }: { searchParams: { [key
     return (
         <main className="flex-1 p-4 md:p-8">
             <Suspense fallback={<LoadingState />}>
-                {/* @ts-ignore-error Server Component */}
+                {/* @ts-expect-error Async Server Component */}
                 <PerfectionResults code={validation.data} />
             </Suspense>
         </main>
