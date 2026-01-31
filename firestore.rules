@@ -1,0 +1,171 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All data is considered private and is
+ * exclusively accessible by the user who owns it. The security model ensures that users can only interact
+ * with their own data tree, providing strong data isolation.
+ *
+ * Data Structure: All application data is hierarchically organized under the `/users/{userId}` collection. This
+ * structure naturally segregates data by owner, simplifying security logic. A user's profile, their code
+ * analyses, and the code smells for each analysis are all nested within their unique user document path.
+ *
+ * Key Security Decisions:
+ * - Default Deny: All paths are closed by default. Access is granted only through explicit `allow` statements.
+ * - User Data Silos: The rules strictly enforce that a user can only access documents where their UID is
+ *   present in the document path. There is no concept of shared or public data.
+ * - No User Enumeration: Listing the top-level `/users` collection is disallowed to prevent exposing the
+ *   list of all application users.
+ * - Ownership-Based Access: All create, read, update, and delete operations are contingent on the requesting
+ *   user being the owner of the data, as determined by the `{userId}` wildcard in the path.
+ *
+ * Denormalization for Authorization: The data model uses path-based authorization, which is a highly performant
+ * and secure pattern. The user's UID (`userId`) is part of the path for all their data (e.g.,
+ * `/users/{userId}/code_analyses/{analysisId}`). This avoids the need for slow and costly `get()` calls to check
+ * ownership on related documents, as ownership can be verified directly from the request context.
+ *
+ * Structural Segregation: The entire data model is built on structural segregation. All user-specific, private
+ * data is stored within a user's dedicated document tree, completely separate from any other user's data. This
+ * is the most secure way to manage private user content.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------------
+    // Helper Functions
+    // ------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the authenticated user's UID matches the provided userId.
+     * This is the primary function for enforcing data ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Verifies that a document currently exists in Firestore.
+     * This is crucial for securing update and delete operations.
+     */
+    function documentExists() {
+      return resource != null;
+    }
+
+    /**
+     * A composite check for state-changing operations (update, delete)
+     * that ensures the user is the owner AND the document exists.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && documentExists();
+    }
+    
+    /**
+     * For user document creation, ensures the `id` field within the
+     * document data matches the document's ID in the path.
+     */
+    function hasValidUserCreateData(userId) {
+      return request.resource.data.id == userId;
+    }
+
+    /**
+     * For user document updates, ensures the `id` field is immutable.
+     */
+    function userIsImmutable() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * For analysis document creation, ensures the `userId` field within the
+     * document data matches the `userId` in the path.
+     */
+    function hasValidAnalysisCreateData(userId) {
+      return request.resource.data.userId == userId;
+    }
+
+    /**
+     * For analysis document updates, ensures the owning `userId` field is immutable.
+     */
+    function analysisIsImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+    
+    /**
+     * For code smell creation, ensures its parent analysis document exists.
+     */
+    function parentAnalysisExists(userId, analysisId) {
+      return exists(/databases/$(database)/documents/users/$(userId)/code_analyses/$(analysisId));
+    }
+    
+    /**
+     * For code smell creation, ensures the `analysisId` field within the
+     * document data matches the `analysisId` in the path.
+     */
+    function hasValidSmellCreateData(analysisId) {
+      return request.resource.data.analysisId == analysisId;
+    }
+    
+    /**
+     * For code smell updates, ensures the parent `analysisId` field is immutable.
+     */
+    function smellIsImmutable() {
+      return request.resource.data.analysisId == resource.data.analysisId;
+    }
+
+    // ------------------------------------------------------------------------
+    // Collection Rules
+    // ------------------------------------------------------------------------
+
+    /**
+     * @description Users can create their own profile, and then only they can read, update, or delete it.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user creating their own document at `/users/USER_123`.
+     * @deny (create) An authenticated user trying to create a document for someone else at `/users/OTHER_USER`.
+     * @deny (list) Any user trying to list all documents in the `/users` collection.
+     * @principle Restricts access to a user's own data tree and allows for self-creation of a root user profile.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Disallow user enumeration
+      allow create: if isOwner(userId) && hasValidUserCreateData(userId);
+      allow update: if isExistingOwner(userId) && userIsImmutable();
+      allow delete: if isExistingOwner(userId);
+    }
+    
+    /**
+     * @description A user can manage the code analyses that belong to them. Access is restricted
+     *              to the user specified in the path.
+     * @path /users/{userId}/code_analyses/{analysisId}
+     * @allow (create) User `USER_123` creating a new analysis in their own subcollection.
+     * @deny (get) User `USER_456` trying to read an analysis from `/users/USER_123/...`.
+     * @deny (update) A user trying to change the `userId` on an existing analysis.
+     * @principle Enforces document ownership for all CRUD operations within a user's private subcollection.
+     */
+    match /users/{userId}/code_analyses/{analysisId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && hasValidAnalysisCreateData(userId);
+      allow update: if isExistingOwner(userId) && analysisIsImmutable();
+      allow delete: if isExistingOwner(userId);
+    }
+    
+    /**
+     * @description A user can manage the code smells associated with one of their specific code analyses.
+     *              Access is inherited from the parent user path.
+     * @path /users/{userId}/code_analyses/{analysisId}/code_smells/{smellId}
+     * @allow (create) User `USER_123` adding a code smell to an analysis they own.
+     * @deny (get) User `USER_456` trying to read a code smell from another user's analysis.
+     * @deny (create) User `USER_123` trying to add a code smell to a non-existent parent analysis.
+     * @principle Validates relational integrity by ensuring a subcollection document's parent exists before creation.
+     */
+    match /users/{userId}/code_analyses/{analysisId}/code_smells/{smellId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && parentAnalysisExists(userId, analysisId) && hasValidSmellCreateData(analysisId);
+      allow update: if isExistingOwner(userId) && smellIsImmutable();
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

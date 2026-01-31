@@ -1,0 +1,182 @@
+{
+  "entities": {
+    "CodeAnalysis": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CodeAnalysis",
+      "type": "object",
+      "description": "Represents a single code analysis run.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the code analysis run."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N CodeAnalysis) The user who initiated the analysis."
+        },
+        "repositoryName": {
+          "type": "string",
+          "description": "The name of the repository being analyzed."
+        },
+        "commitHash": {
+          "type": "string",
+          "description": "The commit hash of the code being analyzed."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the analysis was performed.",
+          "format": "date-time"
+        },
+        "technicalDebtScore": {
+          "type": "number",
+          "description": "The overall technical debt score for the analyzed code."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "repositoryName",
+        "commitHash",
+        "timestamp",
+        "technicalDebtScore"
+      ]
+    },
+    "CodeSmell": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CodeSmell",
+      "type": "object",
+      "description": "Represents a single code smell detected during analysis.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the code smell."
+        },
+        "analysisId": {
+          "type": "string",
+          "description": "Reference to CodeAnalysis. (Relationship: CodeAnalysis 1:N CodeSmell) The analysis run this code smell belongs to."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of code smell (e.g., nested loop, long function)."
+        },
+        "location": {
+          "type": "string",
+          "description": "The location of the code smell in the code (e.g., file name, line number)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the code smell."
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "A suggested refactoring for the code smell."
+        }
+      },
+      "required": [
+        "id",
+        "analysisId",
+        "type",
+        "location",
+        "description",
+        "suggestion"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the CodeGuardian system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's username."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "username"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  Access is restricted to the user themselves.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/code_analyses/{analysisId}",
+        "definition": {
+          "entityName": "CodeAnalysis",
+          "schema": {
+            "$ref": "#/backend/entities/CodeAnalysis"
+          },
+          "description": "Stores code analysis runs for a specific user. Includes the userId in the path to ensure the user owns the analysis.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "analysisId",
+              "description": "The unique identifier for the code analysis run."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/code_analyses/{analysisId}/code_smells/{smellId}",
+        "definition": {
+          "entityName": "CodeSmell",
+          "schema": {
+            "$ref": "#/backend/entities/CodeSmell"
+          },
+          "description": "Stores code smells detected within a specific code analysis run. Access is restricted to the owning user via the parent code analysis.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "analysisId",
+              "description": "The unique identifier for the code analysis run."
+            },
+            {
+              "name": "smellId",
+              "description": "The unique identifier for the code smell."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the CodeGuardian application, prioritizing authorization independence, clarity, and scalability. It leverages path-based ownership for user-specific data and separates data with different access requirements into distinct collections to simplify security rules. This design also enables secure list operations and maintains data integrity through consistent ownership and naming conventions.\n\n1.  **User Data:** User profiles are stored in `/users/{userId}`. This path provides clear ownership and is used for private user data.\n2.  **Code Analyses:** Code analysis results are stored in `/users/{userId}/code_analyses/{analysisId}`. This structure enforces ownership (only the user can access their analysis) and allows easy retrieval of all analyses for a specific user.\n3.  **Code Smells:** Code smells are stored within a subcollection `/users/{userId}/code_analyses/{analysisId}/code_smells/{smellId}`. This nested structure reflects the relationship between a code analysis and its identified code smells. By placing it under the code analysis, ownership is implicitly tied to the analysis.\n\nThis structure achieves Authorization Independence by avoiding `get()` calls in security rules. For example, access to a `code_analysis` document is determined solely by the `userId` in the path, not by querying a parent document. This ensures atomic operations and simplifies debugging. The structure also supports the required QAPs by segregating data based on ownership and using consistent path-based access control."
+  }
+}
