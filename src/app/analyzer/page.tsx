@@ -2,7 +2,8 @@
 
 import { useState, type FC, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { analyzeCode, type AnalysisState } from '@/app/actions';
+import { analyzeCode } from '@/app/actions';
+import type { AnalysisState } from '@/lib/types';
 import { AlertTriangle, Code, Copy, FileCode2, Loader2, ShieldCheck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';

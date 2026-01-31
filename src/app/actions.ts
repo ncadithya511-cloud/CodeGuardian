@@ -1,38 +1,9 @@
 'use server';
 
-import { z } from 'zod';
 import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 import { refactorCode } from '@/ai/flows/refactor-code';
 import { redirect } from 'next/navigation';
-
-type Issue = {
-  title: string;
-  detail: string;
-  severity: 'High' | 'Medium' | 'Low';
-};
-
-export type AnalysisResult = {
-  score: number;
-  issues: Issue[];
-  explanation: string;
-};
-
-export type AnalysisState = {
-  status: 'idle' | 'loading' | 'success' | 'error';
-  result?: AnalysisResult;
-  error?: string;
-};
-
-export type RefactorState = {
-  status: 'idle' | 'loading' | 'success' | 'error';
-  result?: {
-    refactoredCode: string;
-    explanation: string;
-  };
-  error?: string;
-};
-
-export const codeSchema = z.string().min(10, 'Code must be at least 10 characters long.');
+import { codeSchema, type AnalysisState, type Issue, type RefactorState } from '@/lib/types';
 
 // A mock function to simulate AST analysis and scoring
 export const mockAstAnalysis = async (code: string): Promise<{ score: number, issues: Issue[] }> => {

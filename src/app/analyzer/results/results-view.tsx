@@ -2,7 +2,8 @@
 
 import { useState, useMemo, type FC, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { getRefactoredCode, type RefactorState, type AnalysisResult } from '@/app/actions';
+import { getRefactoredCode } from '@/app/actions';
+import type { RefactorState, AnalysisResult } from '@/lib/types';
 import { AlertTriangle, Bot, CheckCircle, Code, Copy, FileCode2, Github, Loader2, ShieldCheck, Sparkles, Wand2, XCircle } from 'lucide-react';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
 import {

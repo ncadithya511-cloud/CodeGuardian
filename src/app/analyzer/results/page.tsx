@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
-import { codeSchema, mockAstAnalysis, type AnalysisResult } from '@/app/actions';
+import { mockAstAnalysis } from '@/app/actions';
+import { codeSchema, type AnalysisResult } from '@/lib/types';
 import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 import ResultsView from './results-view';
 import { Loader2 } from 'lucide-react';
