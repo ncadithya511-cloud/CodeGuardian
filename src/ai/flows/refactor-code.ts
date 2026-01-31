@@ -39,13 +39,11 @@ const prompt = ai.definePrompt({
   Given a code block and an analysis of its issues, your task is to refactor the code to address the identified problems.
   The refactored code should be functionally equivalent to the original but improved in terms of performance, readability, and maintainability.
 
-  Respond with ONLY a valid JSON object that conforms to the following Zod schema:
-  \`\`\`
-  z.object({
-    refactoredCode: z.string().describe('The refactored code block.'),
-    explanation: z.string().describe('A brief explanation of the changes made during refactoring.')
-  })
-  \`\`\`
+  Respond with ONLY a valid JSON object with the following structure:
+  {
+    "refactoredCode": "The refactored code block.",
+    "explanation": "A brief explanation of the changes made during refactoring."
+  }
   
   Do not include any other text or markdown formatting.
 

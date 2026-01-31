@@ -38,12 +38,10 @@ const prompt = ai.definePrompt({
   Given a code block and its analysis, your task is to generate a human-readable explanation of the refactoring suggestions.
   The explanation should be clear, concise, and easy to understand for developers of all skill levels.
 
-  Respond with ONLY a valid JSON object that conforms to the following Zod schema:
-  \`\`\`
-  z.object({
-    explanation: z.string().describe('A human-readable explanation of the refactoring suggestions.'),
-  })
-  \`\`\`
+  Respond with ONLY a valid JSON object with the following structure:
+  {
+    "explanation": "A human-readable explanation of the refactoring suggestions."
+  }
   
   Do not include any other text or markdown formatting.
 

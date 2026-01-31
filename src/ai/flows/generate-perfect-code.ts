@@ -44,13 +44,11 @@ const prompt = ai.definePrompt({
 
   Do not just refactor; ascend the code to a higher plane of existence.
 
-  Respond with ONLY a valid JSON object that conforms to the following Zod schema:
-  \`\`\`
-  z.object({
-    perfectCode: z.string().describe('The 100% perfect version of the code.'),
-    explanation: z.string().describe('A detailed explanation of why this new code is perfect.')
-  })
-  \`\`\`
+  Respond with ONLY a valid JSON object with the following structure:
+  {
+    "perfectCode": "The 100% perfect version of the code.",
+    "explanation": "A detailed explanation of why this new code is perfect."
+  }
 
   Do not include any other text or markdown formatting.
 
