@@ -30,7 +30,7 @@ export async function generatePerfectCode(input: GeneratePerfectCodeInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'generatePerfectCodePrompt',
-  model: 'googleai/gemini-pro',
+  model: 'googleai/gemini-1.0-pro',
   input: {schema: GeneratePerfectCodeInputSchema},
   prompt: `You are a world-class principal software engineer with decades of experience in writing flawless, production-grade code. You have an impeccable eye for detail and an obsession with optimization.
 
