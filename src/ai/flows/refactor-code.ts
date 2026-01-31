@@ -42,9 +42,9 @@ const prompt = ai.definePrompt({
   The refactored code should be functionally equivalent to the original but improved in terms of performance, readability, and maintainability.
 
   Original Code Block:
-  \'\'\'javascript
+  \`\`\`javascript
   {{code}}
-  \'\'\'
+  \`\`\`
 
   Analysis of Issues (in JSON format):
   {{analysis}}

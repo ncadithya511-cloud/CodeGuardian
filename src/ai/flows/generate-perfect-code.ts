@@ -45,9 +45,9 @@ const prompt = ai.definePrompt({
   Do not just refactor; ascend the code to a higher plane of existence.
 
   Original Code Block:
-  \'\'\'
+  \`\`\`
   {{code}}
-  \'\'\'
+  \`\`\`
 
   Provide the perfect code and a comprehensive explanation of the celestial changes you have bestowed upon it.
   `,
