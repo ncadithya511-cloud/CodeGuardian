@@ -2,3 +2,4 @@ import { config } from 'dotenv';
 config();
 
 import '@/ai/flows/generate-code-explanations.ts';
+import '@/ai/flows/refactor-code.ts';
