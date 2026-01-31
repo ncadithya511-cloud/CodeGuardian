@@ -5,11 +5,23 @@ import { Diamond, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-import type { GeneratePerfectCodeOutput } from '@/ai/flows/generate-perfect-code';
-import { generatePerfectCode } from '@/ai/flows/generate-perfect-code';
+
+// Re-defining type here as the original import is from a disabled feature
+export type GeneratePerfectCodeOutput = {
+  perfectCode: string;
+  explanation: string;
+};
 
 async function performPerfection(code: string): Promise<GeneratePerfectCodeOutput> {
-    return generatePerfectCode({ code });
+    // Return mock data instead of calling the AI service
+    return {
+        perfectCode: `// The AI-powered 'perfect code' generation is temporarily unavailable.
+//
+// True "perfect" code is a combination of correctness, readability,
+// performance, and maintainability that fits the specific needs
+// of your project and team.`,
+        explanation: "The AI-powered 'perfect code' generation is temporarily unavailable. We are working to resolve the issue with the AI service. The best code is code that works, is maintainable, and is understood by your team. Keep striving for those qualities!"
+    };
 }
 
 export default function PerfectCodePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
