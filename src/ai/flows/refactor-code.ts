@@ -48,9 +48,9 @@ const prompt = ai.definePrompt({
   Do not include any other text or markdown formatting.
 
   Original Code Block:
-  \`\`\`
+  \'\'\'
   {{code}}
-  \`\`\`
+  \'\'\'
 
   Analysis of Issues (in JSON format):
   {{analysis}}

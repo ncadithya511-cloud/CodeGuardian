@@ -46,9 +46,9 @@ const prompt = ai.definePrompt({
   Do not include any other text or markdown formatting.
 
   Code Block:
-  \`\`\`
+  \'\'\'
   {{code}}
-  \`\`\`
+  \'\'\'
 
   Analysis:
   {{analysis}}
