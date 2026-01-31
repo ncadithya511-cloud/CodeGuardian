@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { generatePerfectCode } from '@/ai/flows/generate-perfect-code';
 import { codeSchema, type GeneratePerfectCodeOutput } from '@/lib/types';
 import PerfectCodeView from './perfect-code-view';
 import { Diamond, Loader2 } from 'lucide-react';
@@ -7,38 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 
 async function performPerfection(code: string): Promise<GeneratePerfectCodeOutput> {
-    // Mocking the AI call to prevent crashes
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    const mockResult = {
-        perfectCode: `/**
- * @function findUniqueCommonElements
- * @description Finds common elements between two arrays with optimal performance.
- * @param {any[]} arr1 - The first array.
- * @param {any[]} arr2 - The second array.
- * @returns {any[]} An array of unique common elements.
- */
-const findUniqueCommonElements = (arr1, arr2) => {
-  // A Set provides O(1) average time complexity for lookups.
-  const set1 = new Set(arr1);
-  
-  // Use a Set for the result to handle duplicates in arr2 efficiently.
-  const commonElementsSet = new Set();
-  
-  // Single loop over the second array is O(m).
-  for (const element of arr2) {
-    if (set1.has(element)) {
-      commonElementsSet.add(element);
-    }
-  }
-  
-  // Convert the Set back to an array.
-  return Array.from(commonElementsSet);
-};`,
-        explanation: "This is a mocked 'perfect code' response. It demonstrates optimal performance by leveraging Sets for O(1) lookups, avoiding nested loops entirely. The code is also more readable, includes type annotations (via JSDoc), and is structured for clarity and maintainability. This approach is significantly more scalable than the original O(n*m) implementation."
-    };
-    
-    return mockResult;
+    const result = await generatePerfectCode({ code });
+    return result;
 }
 
 export default function PerfectCodePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
