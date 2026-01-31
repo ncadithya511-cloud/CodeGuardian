@@ -6,14 +6,13 @@ import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-// import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
+import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
-    // const analysisString = JSON.stringify(issues, null, 2);
+    const analysisString = JSON.stringify(issues, null, 2);
 
-    // Using mock data as the AI service is unavailable
-    const explanation = "The AI-powered explanation is temporarily unavailable. Based on the static analysis, common improvements include optimizing loops (e.g., avoiding nested loops over large datasets) and simplifying complex conditional logic to improve readability and maintainability.";
+    const { explanation } = await generateCodeExplanations({ code, analysis: analysisString });
 
     return {
         score,

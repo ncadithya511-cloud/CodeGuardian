@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { codeSchema, type AnalysisState, type Issue, type RefactorState } from '@/lib/types';
-// import { refactorCode } from '@/ai/flows/refactor-code';
+import { refactorCode } from '@/ai/flows/refactor-code';
 
 // A mock function to simulate AST analysis and scoring
 export const mockAstAnalysis = async (code: string): Promise<{ score: number, issues: Issue[] }> => {
@@ -83,31 +83,21 @@ export async function getRefactoredCode(
   prevState: RefactorState,
   formData: FormData
 ): Promise<RefactorState> {
-  // const code = formData.get('code') as string;
-  // const analysis = formData.get('analysis') as string;
+  const code = formData.get('code') as string;
+  const analysis = formData.get('analysis') as string;
 
-  // if (!code || !analysis) {
-  //   return { status: 'error', error: 'Missing code or analysis for refactoring.' };
-  // }
-  
-  const mockRefactoredCode = `// AI-powered refactoring is temporarily unavailable.
-// This is a placeholder demonstrating a potential optimization.
-function findCommonElementsOptimized(arr1, arr2) {
-  const set1 = new Set(arr1);
-  const commonElements = new Set();
-  for (const element of arr2) {
-    if (set1.has(element)) {
-      commonElements.add(element);
-    }
+  if (!code || !analysis) {
+    return { status: 'error', error: 'Missing code or analysis for refactoring.' };
   }
-  return Array.from(commonElements);
-}`;
   
-  return { 
-    status: 'success', 
-    result: {
-      refactoredCode: mockRefactoredCode,
-      explanation: "The AI-powered refactoring is temporarily unavailable. The example above shows a possible optimization using a Set for more efficient lookups, reducing the complexity from O(n*m) to O(n+m)."
-    }
-  };
+  try {
+    const result = await refactorCode({ code, analysis });
+    return {
+      status: 'success',
+      result,
+    };
+  } catch (e: any) {
+    console.error(e);
+    return { status: 'error', error: e.message || 'An unexpected error occurred during refactoring.' };
+  }
 }
