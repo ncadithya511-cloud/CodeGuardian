@@ -31,7 +31,6 @@ export async function generatePerfectCode(input: GeneratePerfectCodeInput): Prom
 const prompt = ai.definePrompt({
   name: 'generatePerfectCodePrompt',
   input: {schema: GeneratePerfectCodeInputSchema},
-  output: {schema: GeneratePerfectCodeOutputSchema},
   prompt: `You are a world-class principal software engineer with decades of experience in writing flawless, production-grade code. You have an impeccable eye for detail and an obsession with optimization.
 
   Given the following code block, your task is to rewrite it to be 100% perfect.
@@ -45,10 +44,11 @@ const prompt = ai.definePrompt({
   Do not just refactor; ascend the code to a higher plane of existence.
 
   Original Code Block:
-  \'\'\'
+  \`\`\`
   {{code}}
-  \'\'\'
-  `,
+  \`\`\`
+
+  Respond ONLY with a valid JSON object that conforms to this Zod schema: ${JSON.stringify(GeneratePerfectCodeOutputSchema.jsonSchema)}. Do not include any other text or formatting.`,
 });
 
 const generatePerfectCodeFlow = ai.defineFlow(
@@ -58,7 +58,16 @@ const generatePerfectCodeFlow = ai.defineFlow(
     outputSchema: GeneratePerfectCodeOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    const jsonString = response.text;
+    try {
+        // The model might return the JSON string wrapped in markdown
+        const cleanedJsonString = jsonString.replace(/^```json\n/, '').replace(/\n```$/, '');
+        const parsed = JSON.parse(cleanedJsonString);
+        return GeneratePerfectCodeOutputSchema.parse(parsed);
+    } catch (e) {
+        console.error('Error parsing AI response for perfect code:', e, 'Raw response:', jsonString);
+        throw new Error('Failed to get a valid perfect code response from the AI.');
+    }
   }
 );
