@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
-    const { score, issues } = mockAstAnalysis(code);
+    const { score, issues } = await mockAstAnalysis(code);
     const detailedAnalysis = `Technical Debt Score: ${score}/100. Issues found: ${JSON.stringify(issues, null, 2)}`;
     
     const aiResponse = await generateCodeExplanations({

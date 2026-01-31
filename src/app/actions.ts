@@ -35,7 +35,7 @@ export type RefactorState = {
 export const codeSchema = z.string().min(10, 'Code must be at least 10 characters long.');
 
 // A mock function to simulate AST analysis and scoring
-export const mockAstAnalysis = (code: string): { score: number, issues: Issue[] } => {
+export const mockAstAnalysis = async (code: string): Promise<{ score: number, issues: Issue[] }> => {
   // Simple logic to generate a score and some issues based on code characteristics
   const lines = code.split('\n').length;
   const complexityMatch = (code.match(/(if|for|while|case)/g) || []).length;
