@@ -34,21 +34,19 @@ export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCo
 const prompt = ai.definePrompt({
   name: 'refactorCodePrompt',
   input: {schema: RefactorCodeInputSchema},
-  output: {schema: RefactorCodeOutputSchema},
   prompt: `You are an expert software engineer specializing in code refactoring and optimization.
-
   Given a code block and an analysis of its issues, your task is to refactor the code to address the identified problems.
-  You must only return the refactored code and a brief explanation of the changes. Do not include the original code in your response.
   The refactored code should be functionally equivalent to the original but improved in terms of performance, readability, and maintainability.
 
   Original Code Block:
-  \'\'\'
+  \`\`\`
   {{code}}
-  \'\'\'
+  \`\`\`
 
   Analysis of Issues (in JSON format):
   {{analysis}}
-  `,
+
+  Respond ONLY with a valid JSON object that conforms to this Zod schema: ${JSON.stringify(RefactorCodeOutputSchema.jsonSchema)}. Do not include any other text or formatting.`,
 });
 
 const refactorCodeFlow = ai.defineFlow(
@@ -58,7 +56,16 @@ const refactorCodeFlow = ai.defineFlow(
     outputSchema: RefactorCodeOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    const jsonString = response.text;
+    try {
+      // The model might return the JSON string wrapped in markdown
+      const cleanedJsonString = jsonString.replace(/^```json\n/, '').replace(/\n```$/, '');
+      const parsed = JSON.parse(cleanedJsonString);
+      return RefactorCodeOutputSchema.parse(parsed);
+    } catch (e) {
+      console.error('Error parsing AI response for refactoring:', e, 'Raw response:', jsonString);
+      throw new Error('Failed to get a valid refactoring from the AI.');
+    }
   }
 );
