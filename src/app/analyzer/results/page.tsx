@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { mockAstAnalysis } from '@/app/actions';
-import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 import { codeSchema, type AnalysisResult } from '@/lib/types';
 import ResultsView from './results-view';
 import { Loader2 } from 'lucide-react';
@@ -11,13 +10,15 @@ import { AlertTriangle } from 'lucide-react';
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
 
-    const analysisJson = JSON.stringify(issues);
-    const explanationResult = await generateCodeExplanations({ code, analysis: analysisJson });
+    // MOCK AI CALL
+    const mockExplanation = "This is a mock explanation. The AI suggested refactoring the nested loops for better performance and simplifying complex conditional logic to improve readability. This avoids the performance bottleneck of O(n^2) complexity and makes the code easier to maintain.";
+
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
 
     return {
         score,
         issues,
-        explanation: explanationResult.explanation,
+        explanation: mockExplanation,
     };
 }
 
