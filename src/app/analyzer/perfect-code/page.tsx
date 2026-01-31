@@ -5,10 +5,41 @@ import { Diamond, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-import { generatePerfectCode, type GeneratePerfectCodeOutput } from '@/ai/flows/generate-perfect-code';
+import type { GeneratePerfectCodeOutput } from '@/ai/flows/generate-perfect-code';
 
 async function performPerfection(code: string): Promise<GeneratePerfectCodeOutput> {
-    return generatePerfectCode({ code });
+    // MOCK IMPLEMENTATION
+    const mockResult: GeneratePerfectCodeOutput = {
+        perfectCode: `// AI "Perfection" is currently disabled due to configuration issues.
+// This is a mock response demonstrating an ideal structure.
+/**
+ * Finds common elements between two arrays efficiently.
+ * @param {Array<any>} arr1 The first array.
+ * @param {Array<any>} arr2 The second array.
+ * @returns {Array<any>} An array of common elements, with no duplicates.
+ */
+function findCommonElementsPerfected(arr1, arr2) {
+  // Input validation
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    throw new Error("Invalid input: Both arguments must be arrays.");
+  }
+  
+  const set1 = new Set(arr1);
+  const commonElements = new Set();
+
+  for (const element of arr2) {
+    if (set1.has(element)) {
+      commonElements.add(element);
+    }
+  }
+
+  // Return a new array from the Set
+  return [...commonElements];
+}`,
+        explanation: 'This is a mock explanation. The "perfect" code includes input validation, uses efficient data structures (Set) for optimal performance, and includes clear JSDoc comments for maintainability. The AI service that generates this is currently unavailable.'
+    };
+    
+    return new Promise(resolve => setTimeout(() => resolve(mockResult), 1500));
 }
 
 export default function PerfectCodePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
