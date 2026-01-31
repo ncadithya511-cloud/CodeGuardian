@@ -5,6 +5,12 @@ import { useFormStatus } from 'react-dom';
 import { analyzeCode, type AnalysisState } from '@/app/actions';
 import { AlertTriangle, Bot, CheckCircle, Code, FileCode2, Frown, Github, Loader2, ShieldCheck, XCircle } from 'lucide-react';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,7 +96,7 @@ const ScoreChart: FC<{ score: number }> = ({ score }) => {
       >
         <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
         <RadialBar
-          background
+          background={{ fill: 'hsl(var(--muted))' }}
           dataKey="value"
           cornerRadius={10}
           fill={color}
@@ -101,7 +107,7 @@ const ScoreChart: FC<{ score: number }> = ({ score }) => {
           y="50%"
           textAnchor="middle"
           dominantBaseline="middle"
-          className="fill-foreground font-headline text-4xl font-bold"
+          className="fill-foreground font-headline text-5xl font-bold"
         >
           {score}
         </text>
@@ -135,7 +141,7 @@ const GitCommitSimulator: FC<{ score: number }> = ({ score }) => {
     };
   
     return (
-      <Card>
+      <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Github />
@@ -184,140 +190,163 @@ export default function Home() {
 
   const severityColor = (severity: 'High' | 'Medium' | 'Low') => {
     switch (severity) {
-      case 'High': return 'bg-destructive/20 text-destructive-foreground border-destructive/50';
-      case 'Medium': return 'bg-yellow-500/20 text-yellow-200 border-yellow-500/50';
-      case 'Low': return 'bg-blue-500/20 text-blue-300 border-blue-500/50';
-      default: return 'bg-secondary';
+      case 'High': return 'border-destructive/80 text-destructive';
+      case 'Medium': return 'border-yellow-400/80 text-yellow-400';
+      case 'Low': return 'border-sky-400/80 text-sky-400';
+      default: return 'border-secondary';
     }
   }
 
   return (
     <div className="flex min-h-screen flex-col bg-background font-body text-foreground">
-      <header className="sticky top-0 z-10 flex h-16 items-center justify-center border-b bg-background/80 backdrop-blur-sm">
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur-sm px-4 md:px-8">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-7 w-7 text-primary" />
           <h1 className="font-headline text-2xl font-semibold">CodeGuardian</h1>
         </div>
+        <Button variant="ghost" size="icon" asChild>
+          <a href="https://github.com/FirebaseExtended/firebase-studio-prototypers" target="_blank" rel="noopener noreferrer">
+            <Github className="h-5 w-5" />
+            <span className="sr-only">GitHub</span>
+          </a>
+        </Button>
       </header>
 
       <main className="flex-1 p-4 md:p-8">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 lg:grid-cols-2">
-          <Card className="lg:sticky lg:top-24 h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileCode2 /> Code to Analyze
-              </CardTitle>
-              <CardDescription>
-                Paste your source code below. The system will parse it, identify potential issues, and suggest improvements.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form action={formAction}>
-                <Textarea
-                  name="code"
-                  placeholder="Enter your code here..."
-                  defaultValue={defaultCode}
-                  className="min-h-[400px] font-code text-[13px] leading-relaxed"
-                  required
-                />
-                <div className="mt-4">
-                  <SubmitButton />
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+        <div className="mx-auto max-w-7xl">
+           <div className="mb-12 text-center">
+              <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+                Meet Your AI <span className="text-primary">Code Guardian</span>
+              </h1>
+              <p className="mt-6 max-w-3xl mx-auto text-lg text-muted-foreground">
+                Leverage a hybrid static and generative AI system to analyze, score, and improve your code's quality, performance, and maintainability.
+              </p>
+            </div>
 
-          <div className="flex flex-col gap-8">
-            {state.status === 'idle' && (
-              <Card className="flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[400px]">
-                <div className="rounded-full bg-primary/10 p-4">
-                  <Bot className="h-12 w-12 text-primary" />
-                </div>
-                <h2 className="text-xl font-semibold">Awaiting Analysis</h2>
-                <p className="max-w-md text-muted-foreground">
-                  Your code analysis report will appear here. The AI Guardian is ready to review your code for quality, performance, and maintainability.
-                </p>
-              </Card>
-            )}
-
-            {state.status === 'error' && (
-               <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Analysis Failed</AlertTitle>
-                  <AlertDescription>
-                    {state.error || "An unknown error occurred. Please try again."}
-                  </AlertDescription>
-                </Alert>
-            )}
-
-            {state.status === 'success' && state.result && (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Analysis Report</CardTitle>
-                    <CardDescription>
-                      A summary of code quality metrics and identified issues.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="flex items-center justify-center">
-                       <ScoreChart score={state.result.score} />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <Card className="lg:sticky lg:top-24 h-fit bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                    <FileCode2 /> Code to Analyze
+                </CardTitle>
+                <CardDescription>
+                    Paste your source code below. The system will parse it, identify potential issues, and suggest improvements.
+                </CardDescription>
+                </CardHeader>
+                <CardContent>
+                <form action={formAction}>
+                    <Textarea
+                    name="code"
+                    placeholder="Enter your code here..."
+                    defaultValue={defaultCode}
+                    className="min-h-[400px] font-code text-[13px] leading-relaxed bg-transparent"
+                    required
+                    />
+                    <div className="mt-4">
+                    <SubmitButton />
                     </div>
-                    <div className="flex flex-col gap-4">
-                        <h3 className="font-semibold text-center md:text-left">Identified Code Smells</h3>
-                        {state.result.issues.length > 0 ? (
-                            state.result.issues.map((issue, index) => (
-                                <div key={index} className="rounded-lg border bg-card-foreground/5 p-4">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <h4 className="font-medium text-sm">{issue.title}</h4>
-                                        <Badge variant="outline" className={cn("text-xs", severityColor(issue.severity))}>
-                                            {issue.severity}
-                                        </Badge>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">{issue.detail}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center">
-                                <CheckCircle className="h-8 w-8 text-accent" />
-                                <p className="text-sm font-medium">No major issues found!</p>
-                                <p className="text-xs text-muted-foreground">Great job keeping the code clean.</p>
-                            </div>
-                        )}
-                    </div>
-                  </CardContent>
-                </Card>
+                </form>
+                </CardContent>
+            </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Bot /> AI Refactoring Suggestions
-                    </CardTitle>
-                    <CardDescription>
-                      The AI Guardian's explanation of the identified issues and how to resolve them.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="prose prose-sm dark:prose-invert max-w-none rounded-md border bg-background/50 p-4 font-body">
-                      <p>{state.result.explanation}</p>
+            <div className="flex flex-col gap-8">
+                {state.status === 'idle' && (
+                <Card className="flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[400px] bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                    <div className="rounded-full bg-primary/10 p-4">
+                    <Bot className="h-12 w-12 text-primary" />
                     </div>
-                  </CardContent>
-                </Card>
-                
-                <GitCommitSimulator score={state.result.score} />
-              </>
-            )}
-            
-            {state.status === 'loading' && (
-                <Card className="flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[400px]">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                    <h2 className="text-xl font-semibold">Guardian is Thinking...</h2>
+                    <h2 className="text-xl font-semibold">Awaiting Analysis</h2>
                     <p className="max-w-md text-muted-foreground">
-                        Analyzing Abstract Syntax Tree, calculating complexity, and consulting with the local AI. Please wait.
+                    Your code analysis report will appear here. The AI Guardian is ready to review your code for quality, performance, and maintainability.
                     </p>
                 </Card>
-            )}
-          </div>
+                )}
+
+                {state.status === 'error' && (
+                <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Analysis Failed</AlertTitle>
+                    <AlertDescription>
+                        {state.error || "An unknown error occurred. Please try again."}
+                    </AlertDescription>
+                    </Alert>
+                )}
+
+                {state.status === 'success' && state.result && (
+                <>
+                    <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                    <CardHeader>
+                        <CardTitle>Analysis Report</CardTitle>
+                        <CardDescription>
+                        A summary of code quality metrics and identified issues.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div className="flex items-center justify-center rounded-lg bg-background/50 p-4">
+                          <ScoreChart score={state.result.score} />
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <h3 className="font-semibold text-center md:text-left">Identified Code Smells</h3>
+                            {state.result.issues.length > 0 ? (
+                                <Accordion type="single" collapsible className="w-full">
+                                    {state.result.issues.map((issue, index) => (
+                                        <AccordionItem value={`item-${index}`} key={index} className="border-border/50 rounded-lg mb-2 bg-card-foreground/5 overflow-hidden">
+                                            <AccordionTrigger className="px-4 py-3 text-sm font-medium hover:no-underline">
+                                                <div className="flex justify-between items-center w-full">
+                                                    <span>{issue.title}</span>
+                                                    <Badge variant="outline" className={cn("text-xs", severityColor(issue.severity))}>
+                                                        {issue.severity}
+                                                    </Badge>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="px-4 pb-3">
+                                                <p className="text-xs text-muted-foreground">{issue.detail}</p>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center">
+                                    <CheckCircle className="h-8 w-8 text-accent" />
+                                    <p className="text-sm font-medium">No major issues found!</p>
+                                    <p className="text-xs text-muted-foreground">Great job keeping the code clean.</p>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                    </Card>
+
+                    <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                      <Bot /> AI Refactoring Suggestions
+                        </CardTitle>
+                        <CardDescription>
+                      The AI Guardian's explanation of the identified issues and how to resolve them.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-border/50 bg-background/50 p-4 font-body">
+                          <p>{state.result.explanation}</p>
+                        </div>
+                    </CardContent>
+                    </Card>
+                    
+                    <GitCommitSimulator score={state.result.score} />
+                </>
+                )}
+                
+                {state.status === 'loading' && (
+                    <Card className="flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[400px] bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                        <h2 className="text-xl font-semibold">Guardian is Thinking...</h2>
+                        <p className="max-w-md text-muted-foreground">
+                            Analyzing Abstract Syntax Tree, calculating complexity, and consulting with the local AI. Please wait.
+                        </p>
+                    </Card>
+                )}
+            </div>
+            </div>
         </div>
       </main>
     </div>
