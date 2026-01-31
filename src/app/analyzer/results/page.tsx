@@ -6,17 +6,32 @@ import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
 
-    const mockExplanation = "AI-powered explanations are temporarily unavailable due to a persistent configuration issue with the AI service. Based on the static analysis, your code contains potential issues like nested loops and high complexity. Refactoring these areas can improve performance and readability.";
+    try {
+        const explanationResult = await generateCodeExplanations({
+            code,
+            analysis: JSON.stringify(issues),
+        });
 
-    return {
-        score,
-        issues,
-        explanation: mockExplanation,
-    };
+        return {
+            score,
+            issues,
+            explanation: explanationResult.explanation,
+        };
+    } catch (e) {
+        console.error("Failed to generate AI explanations, using fallback.", e);
+        // Fallback to static analysis explanation if AI fails
+        const fallbackExplanation = "AI-powered explanations are temporarily unavailable. Based on the static analysis, your code contains potential issues like nested loops and high complexity. Refactoring these areas can improve performance and readability.";
+        return {
+            score,
+            issues,
+            explanation: fallbackExplanation,
+        };
+    }
 }
 
 export default function ResultsPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {

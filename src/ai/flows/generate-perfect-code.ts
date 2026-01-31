@@ -42,8 +42,6 @@ const prompt = ai.definePrompt({
   - Adherence to all modern best practices and conventions.
   - Include comprehensive documentation via comments.
 
-  Do not just refactor; ascend the code to a higher plane of existence.
-
   Respond with ONLY a valid JSON object with the following structure:
   {
     "perfectCode": "The 100% perfect version of the code.",
