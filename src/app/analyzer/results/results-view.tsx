@@ -4,7 +4,7 @@ import { useState, useMemo, type FC, useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { getRefactoredCode } from '@/app/actions';
 import type { RefactorState, AnalysisResult } from '@/lib/types';
-import { AlertTriangle, Bot, CheckCircle, Code, Copy, FileCode2, Github, Loader2, Sparkles, Wand2, XCircle } from 'lucide-react';
+import { AlertTriangle, Bot, CheckCircle, Code, Copy, Diamond, FileCode2, Github, Loader2, Sparkles, Wand2, XCircle } from 'lucide-react';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
 import {
   Accordion,
@@ -336,6 +336,28 @@ export default function ResultsView({ code, analysisResult }: ResultsViewProps) 
                         </CardContent>
                     </Card>
                   )}
+
+                  <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                      <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                              <Diamond /> Go for Perfection
+                          </CardTitle>
+                          <CardDescription>
+                              Feeling adventurous? Let the AI try to rewrite your code to be 100% perfect.
+                          </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                          <Button asChild className="w-full">
+                              <Link href={{
+                                  pathname: '/analyzer/perfect-code',
+                                  query: { code: code }
+                              }}>
+                                  <Diamond className="mr-2 h-4 w-4" />
+                                  Generate Perfect Code
+                              </Link>
+                          </Button>
+                      </CardContent>
+                  </Card>
                   
                   <GitCommitSimulator score={analysisResult.score} />
                 </div>

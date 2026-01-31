@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { codeSchema, type AnalysisState, type Issue, type RefactorState } from '@/lib/types';
+import { refactorCode } from '@/ai/flows/refactor-code';
 
 // A mock function to simulate AST analysis and scoring
 export const mockAstAnalysis = async (code: string): Promise<{ score: number, issues: Issue[] }> => {
@@ -83,16 +84,23 @@ export async function getRefactoredCode(
   formData: FormData
 ): Promise<RefactorState> {
   const code = formData.get('code') as string;
+  const analysis = formData.get('analysis') as string;
 
-  if (!code) {
-    return { status: 'error', error: 'Missing code for refactoring.' };
+  if (!code || !analysis) {
+    return { status: 'error', error: 'Missing code or analysis for refactoring.' };
   }
   
-  return { 
-    status: 'success', 
-    result: {
-      refactoredCode: `// The AI-powered refactoring feature is temporarily unavailable.\n// This is a placeholder and no changes have been made to your code.\n\n${code}`,
-      explanation: "The AI-powered refactoring feature is temporarily unavailable due to a persistent configuration issue. We are working on a solution. For now, we are returning the original code."
-    } 
-  };
+  try {
+    const result = await refactorCode({ code, analysis });
+    return { 
+      status: 'success', 
+      result: result
+    };
+  } catch (e: any) {
+    console.error("Refactoring failed:", e);
+    return {
+      status: 'error',
+      error: e.message || "An unexpected error occurred during refactoring."
+    }
+  }
 }

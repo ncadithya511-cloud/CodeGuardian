@@ -33,6 +33,7 @@ export async function generateCodeExplanations(input: GenerateCodeExplanationsIn
 const prompt = ai.definePrompt({
   name: 'generateCodeExplanationsPrompt',
   input: {schema: GenerateCodeExplanationsInputSchema},
+  output: {schema: GenerateCodeExplanationsOutputSchema},
   prompt: `You are an AI assistant that helps developers understand code refactoring suggestions.
   Given a code block and its analysis, your task is to generate a human-readable explanation of the refactoring suggestions.
   The explanation should be clear, concise, and easy to understand for developers of all skill levels.
@@ -44,8 +45,7 @@ const prompt = ai.definePrompt({
 
   Analysis:
   {{analysis}}
-
-  Respond ONLY with a valid JSON object that conforms to this Zod schema: ${JSON.stringify(GenerateCodeExplanationsOutputSchema.jsonSchema)}. Do not include any other text or formatting.`,
+  `,
 });
 
 const generateCodeExplanationsFlow = ai.defineFlow(
@@ -55,16 +55,7 @@ const generateCodeExplanationsFlow = ai.defineFlow(
     outputSchema: GenerateCodeExplanationsOutputSchema,
   },
   async input => {
-    const response = await prompt(input);
-    const jsonString = response.text;
-    try {
-      // The model might return the JSON string wrapped in markdown
-      const cleanedJsonString = jsonString.replace(/^```json\n/, '').replace(/\n```$/, '');
-      const parsed = JSON.parse(cleanedJsonString);
-      return GenerateCodeExplanationsOutputSchema.parse(parsed);
-    } catch (e) {
-      console.error('Error parsing AI response for explanation:', e, 'Raw response:', jsonString);
-      throw new Error('Failed to get a valid explanation from the AI.');
-    }
+    const {output} = await prompt(input);
+    return output!;
   }
 );
