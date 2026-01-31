@@ -4,57 +4,44 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, Zap, Code } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
-
   return (
     <main className="flex-1">
-       <section className="py-16 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-            <div className="flex flex-col justify-center space-y-4 text-center lg:text-left">
-              <div className="space-y-2">
-                 <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm">
-                    AI-Powered Analysis
-                 </div>
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-                  Your Guardian for Clean and Efficient Code
-                </h1>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl mx-auto lg:mx-0 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-                  Get instant analysis, technical debt scoring, and intelligent refactoring suggestions to write clean, efficient, and secure code.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center lg:justify-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-                <Button asChild size="lg">
-                  <Link href="/analyzer">
-                    Start Analyzing
-                  </Link>
-                </Button>
-                 <Button asChild size="lg" variant="outline">
-                  <Link href="#features">
-                    Learn More
-                  </Link>
-                </Button>
-              </div>
+       <section className="relative w-full h-[70vh] min-h-[500px] flex items-center justify-center text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/10 z-0"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(var(--primary-rgb),0.1),_transparent_40%)] z-0"></div>
+        
+        <div className="container px-4 md:px-6 z-10">
+            <div className="grid gap-6 lg:grid-cols-1 lg:gap-12">
+                <div className="flex flex-col justify-center space-y-4">
+                    <div className="space-y-4">
+                        <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                            AI-Powered Analysis
+                        </div>
+                        <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                            Ship Flawless Code, Faster.
+                        </h1>
+                        <p className="max-w-[700px] text-muted-foreground md:text-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
+                            CodeGuardian is your AI partner for writing clean, efficient, and secure code. Get instant analysis, debt scoring, and intelligent refactoring.
+                        </p>
+                    </div>
+                    <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-350">
+                        <Button asChild size="lg">
+                            <Link href="/analyzer">
+                                Analyze Code Now
+                            </Link>
+                        </Button>
+                        <Button asChild size="lg" variant="outline">
+                            <Link href="#features">
+                                Explore Features
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
             </div>
-             <div className="relative w-full h-64 mx-auto overflow-hidden rounded-xl sm:w-full lg:h-auto lg:order-last animate-in fade-in zoom-in-50 duration-500 delay-200">
-                {heroImage && (
-                    <Image
-                        src={heroImage.imageUrl}
-                        alt={heroImage.description}
-                        fill
-                        className="object-cover"
-                        data-ai-hint={heroImage.imageHint}
-                        priority
-                    />
-                )}
-             </div>
-          </div>
         </div>
-      </section>
+    </section>
 
       <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted/40">
         <div className="container px-4 md:px-6">
@@ -66,7 +53,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
+          <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-12 lg:grid-cols-3 lg:gap-8">
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 text-center flex flex-col items-center">
               <CardHeader className="items-center">
                 <div className="p-4 bg-primary/10 rounded-full">
@@ -80,8 +67,8 @@ export default function Home() {
             </Card>
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 text-center flex flex-col items-center">
               <CardHeader className="items-center">
-                <div className="p-4 bg-accent/10 rounded-full">
-                    <ShieldCheck className="h-8 w-8 text-accent" />
+                <div className="p-4 bg-primary/10 rounded-full">
+                    <ShieldCheck className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="mt-4">AI-Powered Refactoring</CardTitle>
               </CardHeader>
