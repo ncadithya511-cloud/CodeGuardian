@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { mockAstAnalysis } from '@/app/actions';
 import { codeSchema, type AnalysisResult } from '@/lib/types';
-import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 import ResultsView from './results-view';
 import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -10,21 +9,13 @@ import { AlertTriangle } from 'lucide-react';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
-    const detailedAnalysis = `Technical Debt Score: ${score}/100. Issues found: ${JSON.stringify(issues, null, 2)}`;
-    
-    const aiResponse = await generateCodeExplanations({
-      code: code,
-      analysis: detailedAnalysis,
-    });
-
-    if (!aiResponse.explanation) {
-      throw new Error('AI failed to generate an explanation.');
-    }
+    // AI feature is currently disabled due to errors.
+    const explanation = "The AI-powered explanation is temporarily unavailable. Based on the static analysis, your code has some areas for improvement. The identified issues highlight potential problems with complexity and efficiency that you should address.";
 
     return {
         score,
         issues,
-        explanation: aiResponse.explanation
+        explanation,
     };
 }
 

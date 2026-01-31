@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { codeSchema } from '@/lib/types';
-import { generatePerfectCode } from '@/ai/flows/generate-perfect-code';
 import PerfectCodeView from './perfect-code-view';
 import { Diamond, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -9,13 +8,13 @@ import { AlertTriangle } from 'lucide-react';
 import type { GeneratePerfectCodeOutput } from '@/ai/flows/generate-perfect-code';
 
 async function performPerfection(code: string): Promise<GeneratePerfectCodeOutput> {
-    const aiResponse = await generatePerfectCode({ code });
-
-    if (!aiResponse.perfectCode) {
-      throw new Error('AI failed to generate perfect code.');
-    }
-
-    return aiResponse;
+    // AI feature is currently disabled due to errors.
+    return {
+      perfectCode: `// AI "perfect code" generation is temporarily disabled.
+// This is a placeholder.
+${code}`,
+      explanation: "The AI-powered 'perfect code' generation is temporarily unavailable. We are working to resolve the issue with the AI service. The best code is code that works, is maintainable, and is understood by your team. Keep striving for those qualities!"
+    };
 }
 
 export default function PerfectCodePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {
