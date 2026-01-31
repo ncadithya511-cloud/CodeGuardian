@@ -27,4 +27,9 @@ export type RefactorState = {
   error?: string;
 };
 
+export type GeneratePerfectCodeOutput = {
+  perfectCode: string;
+  explanation: string;
+};
+
 export const codeSchema = z.string().min(10, 'Code must be at least 10 characters long.');
