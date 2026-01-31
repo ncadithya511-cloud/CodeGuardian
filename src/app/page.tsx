@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, type FC } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useState, useMemo, type FC, useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { analyzeCode, type AnalysisState } from '@/app/actions';
 import { AlertTriangle, Bot, CheckCircle, Code, FileCode2, Frown, Github, Loader2, ShieldCheck, XCircle } from 'lucide-react';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
@@ -180,7 +180,7 @@ const GitCommitSimulator: FC<{ score: number }> = ({ score }) => {
 };
 
 export default function Home() {
-  const [state, formAction] = useFormState(analyzeCode, initialState);
+  const [state, formAction] = useActionState(analyzeCode, initialState);
 
   const severityColor = (severity: 'High' | 'Medium' | 'Low') => {
     switch (severity) {
