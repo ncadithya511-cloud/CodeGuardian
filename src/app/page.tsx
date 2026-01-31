@@ -53,44 +53,44 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-12 lg:grid-cols-3 lg:gap-8">
+          <div className="mx-auto grid max-w-2xl items-start gap-8 py-12">
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-              <CardHeader>
-                <div className="p-4 bg-primary/10 rounded-full w-fit">
-                    <Zap className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="mt-4">Instant Code Analysis</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Get a comprehensive analysis of your code in seconds, including a technical debt score and a list of code smells.
-                </p>
+                <CardContent className="flex items-start gap-6 p-6">
+                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
+                        <Zap className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold">Instant Code Analysis</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                        Get a comprehensive analysis of your code in seconds, including a technical debt score and a list of code smells.
+                        </p>
+                    </div>
               </CardContent>
             </Card>
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-              <CardHeader>
-                <div className="p-4 bg-primary/10 rounded-full w-fit">
-                    <ShieldCheck className="h-8 w-8 text-primary" />
+              <CardContent className="flex items-start gap-6 p-6">
+                <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
+                    <ShieldCheck className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="mt-4">AI-Powered Refactoring</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Leverage generative AI to automatically refactor your code, improving readability, performance, and maintainability.
-                </p>
+                <div>
+                    <h3 className="text-lg font-semibold">AI-Powered Refactoring</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                    Leverage generative AI to automatically refactor your code, improving readability, performance, and maintainability.
+                    </p>
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-              <CardHeader>
-                <div className="p-4 bg-primary/10 rounded-full w-fit">
-                    <Code className="h-8 w-8 text-primary" />
+              <CardContent className="flex items-start gap-6 p-6">
+                <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
+                    <Code className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="mt-4">Git Integration</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Simulate a pre-commit hook that prevents bad code from being committed based on its quality score.
-                </p>
+                <div>
+                    <h3 className="text-lg font-semibold">Git Integration</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                    Simulate a pre-commit hook that prevents bad code from being committed based on its quality score.
+                    </p>
+                </div>
               </CardContent>
             </Card>
           </div>
