@@ -54,37 +54,43 @@ export default function Home() {
             </div>
           </div>
           <div className="mx-auto grid max-w-5xl items-stretch gap-6 py-12 lg:grid-cols-3 lg:gap-8">
-            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 text-center flex flex-col items-center">
-              <CardHeader className="items-center">
-                <div className="p-4 bg-primary/10 rounded-full">
+            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+              <CardHeader>
+                <div className="p-4 bg-primary/10 rounded-full w-fit">
                     <Zap className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="mt-4">Instant Code Analysis</CardTitle>
               </CardHeader>
-              <CardContent className="text-muted-foreground">
-                Get a comprehensive analysis of your code in seconds, including a technical debt score and a list of code smells.
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Get a comprehensive analysis of your code in seconds, including a technical debt score and a list of code smells.
+                </p>
               </CardContent>
             </Card>
-            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 text-center flex flex-col items-center">
-              <CardHeader className="items-center">
-                <div className="p-4 bg-primary/10 rounded-full">
+            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+              <CardHeader>
+                <div className="p-4 bg-primary/10 rounded-full w-fit">
                     <ShieldCheck className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="mt-4">AI-Powered Refactoring</CardTitle>
               </CardHeader>
-              <CardContent className="text-muted-foreground">
-                Leverage generative AI to automatically refactor your code, improving readability, performance, and maintainability.
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Leverage generative AI to automatically refactor your code, improving readability, performance, and maintainability.
+                </p>
               </CardContent>
             </Card>
-            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 text-center flex flex-col items-center">
-              <CardHeader className="items-center">
-                <div className="p-4 bg-primary/10 rounded-full">
+            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+              <CardHeader>
+                <div className="p-4 bg-primary/10 rounded-full w-fit">
                     <Code className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="mt-4">Git Integration</CardTitle>
               </CardHeader>
-              <CardContent className="text-muted-foreground">
-                Simulate a pre-commit hook that prevents bad code from being committed based on its quality score.
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Simulate a pre-commit hook that prevents bad code from being committed based on its quality score.
+                </p>
               </CardContent>
             </Card>
           </div>
