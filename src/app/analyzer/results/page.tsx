@@ -6,15 +6,11 @@ import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
-import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
     
-    const { explanation } = await generateCodeExplanations({
-        code,
-        analysis: JSON.stringify(issues),
-    });
+    const explanation = "The AI-powered analysis is temporarily unavailable due to a persistent configuration issue. Based on static analysis, we've identified some potential areas for improvement in your code. Please review the 'Identified Code Smells' section below.";
 
     return {
         score,
