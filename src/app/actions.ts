@@ -84,19 +84,23 @@ export async function getRefactoredCode(
   formData: FormData
 ): Promise<RefactorState> {
   const code = formData.get('code') as string;
+  const analysis = formData.get('analysis') as string;
 
-  if (!code) {
-    return { status: 'error', error: 'Missing code for refactoring.' };
+  if (!code || !analysis) {
+    return { status: 'error', error: 'Missing code or analysis for refactoring.' };
   }
   
-  // Mocking the AI response to prevent errors
-  const mockResult = {
-    refactoredCode: `// AI refactoring is temporarily unavailable.\n// Here is your original code:\n\n${code}`,
-    explanation: 'The AI refactoring service is currently offline. This is a placeholder response.'
-  };
-
-  return { 
-    status: 'success', 
-    result: mockResult
-  };
+  try {
+    const result = await refactorCode({ code, analysis });
+    return { 
+      status: 'success', 
+      result
+    };
+  } catch (e: any) {
+    console.error(e);
+    return {
+      status: 'error',
+      error: e.message || 'An unexpected error occurred during refactoring.'
+    }
+  }
 }

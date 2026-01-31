@@ -10,9 +10,12 @@ import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations'
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
-    
-    // Mock the explanation to prevent AI service errors
-    const explanation = "The AI explanation service is temporarily unavailable. Based on the static analysis, your code has some areas for improvement. Please review the identified code smells below.";
+    const analysisString = JSON.stringify(issues, null, 2);
+
+    const { explanation } = await generateCodeExplanations({
+        code,
+        analysis: analysisString,
+    });
 
     return {
         score,
@@ -57,6 +60,7 @@ async function AnalysisResults({ code }: { code: string }) {
         const analysisResult = await performAnalysis(code);
         return <ResultsView code={code} analysisResult={analysisResult} />;
     } catch (error) {
+        console.error(error);
         return (
              <div className="mx-auto max-w-3xl">
                 <Alert variant="destructive">
