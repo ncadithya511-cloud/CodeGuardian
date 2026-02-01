@@ -10,12 +10,8 @@ export type AnalysisResult = {
   score: number;
   issues: Issue[];
   explanation: string;
-};
-
-export type AnalysisState = {
-  status: 'idle' | 'loading' | 'success' | 'error';
-  result?: AnalysisResult;
-  error?: string;
+  perfectCode?: string;
+  perfectCodeExplanation?: string;
 };
 
 export type RefactorState = {

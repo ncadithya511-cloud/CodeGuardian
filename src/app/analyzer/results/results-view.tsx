@@ -347,27 +347,46 @@ export default function ResultsView({ code, analysisResult }: ResultsViewProps) 
                     </Card>
                   )}
 
-                  <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                      <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                              <Diamond /> Go for Perfection
-                          </CardTitle>
-                          <CardDescription>
-                              Feeling adventurous? Let the AI try to rewrite your code to be 100% perfect.
-                          </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                          <Button asChild className="w-full">
-                              <Link href={{
-                                  pathname: '/analyzer/perfect-code',
-                                  query: { code: code }
-                              }}>
-                                  <Diamond className="mr-2 h-4 w-4" />
-                                  Generate Perfect Code
-                              </Link>
-                          </Button>
-                      </CardContent>
-                  </Card>
+                  {analysisResult.perfectCode && (
+                    <Card className="bg-card/70 backdrop-blur-xl border-2 border-primary shadow-lg shadow-primary/10">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-primary">
+                                <Diamond /> Perfect Code
+                            </CardTitle>
+                            <CardDescription>
+                                The AI's attempt at a flawless version of your code.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {analysisResult.perfectCodeExplanation && (
+                                <div className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-border/50 bg-background/50 p-4 font-body mb-4 relative">
+                                    <p>{analysisResult.perfectCodeExplanation}</p>
+                                    <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => {
+                                        navigator.clipboard.writeText(analysisResult.perfectCodeExplanation || '');
+                                        toast({ title: "Explanation copied!" });
+                                    }}>
+                                        <Copy className="h-4 w-4" />
+                                        <span className="sr-only">Copy explanation</span>
+                                    </Button>
+                                </div>
+                            )}
+                            <div className="relative">
+                                <Textarea
+                                    readOnly
+                                    value={analysisResult.perfectCode}
+                                    className="min-h-[300px] font-code text-[13px] leading-relaxed bg-transparent"
+                                />
+                                <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => {
+                                    navigator.clipboard.writeText(analysisResult.perfectCode || '');
+                                    toast({ title: "Perfect code copied!" });
+                                }}>
+                                    <Copy className="h-4 w-4" />
+                                    <span className="sr-only">Copy perfect code</span>
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                  )}
                   
                   <GitCommitSimulator score={analysisResult.score} />
                 </div>
