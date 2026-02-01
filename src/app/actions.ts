@@ -3,6 +3,8 @@
 import { redirect } from 'next/navigation';
 import type { AnalysisState, Issue, RefactorState } from '@/lib/types';
 import { codeSchema } from '@/lib/types';
+import { refactorCode } from '@/ai/flows/refactor-code';
+import { generatePerfectCode } from '@/ai/flows/generate-perfect-code';
 
 // A mock function to simulate AST analysis and scoring
 export const mockAstAnalysis = async (code: string): Promise<{ score: number, issues: Issue[] }> => {
@@ -91,22 +93,7 @@ export async function getRefactoredCode(
   }
   
   try {
-    // Mock AI call to prevent crashes from API errors
-    const result = {
-        refactoredCode: `function findCommonElements(arr1, arr2) {
-  const set2 = new Set(arr2);
-  const commonElements = new Set();
-
-  for (const element of arr1) {
-    if (set2.has(element)) {
-      commonElements.add(element);
-    }
-  }
-
-  return Array.from(commonElements);
-}`,
-        explanation: "The nested loop was replaced with a Set for efficient O(1) lookups, drastically improving performance from O(n*m) to O(n+m). A Set is also used for the results to automatically handle duplicates."
-    };
+    const result = await refactorCode({ code, analysis });
 
     return {
       status: 'success',
@@ -119,4 +106,29 @@ export async function getRefactoredCode(
       error: e.message || 'An unexpected error occurred during refactoring.',
     };
   }
+}
+
+export async function getPerfectCode(
+  prevState: any,
+  formData: FormData
+): Promise<any> {
+    const code = formData.get('code') as string;
+
+    if (!code) {
+        return { status: 'error', error: 'Missing code for perfection.' };
+    }
+
+    try {
+        const result = await generatePerfectCode({ code });
+        return {
+            status: 'success',
+            result: result,
+        };
+    } catch (e: any) {
+        console.error("Perfect code generation failed:", e);
+        return {
+            status: 'error',
+            error: e.message || 'An unexpected error occurred during perfect code generation.',
+        };
+    }
 }

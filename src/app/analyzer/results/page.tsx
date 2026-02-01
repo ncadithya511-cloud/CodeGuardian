@@ -6,20 +6,20 @@ import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
     const { score, issues } = await mockAstAnalysis(code);
 
-    // Mock AI call to prevent crashes from API errors
-    const explanation = "The primary issue is the nested loop, which leads to a time complexity of O(n*m). This can be optimized by using a Set for the second array, allowing for O(1) average time complexity for lookups. This reduces the overall complexity to O(n+m), which is much more efficient for large datasets.";
+    const { explanation } = await generateCodeExplanations({
+        code,
+        analysis: JSON.stringify(issues, null, 2),
+    });
     
-    // Add a short delay to simulate network latency
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
     return {
         score,
         issues,
-        explanation: explanation,
+        explanation,
     };
 }
 
