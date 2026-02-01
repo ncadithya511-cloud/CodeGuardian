@@ -55,39 +55,39 @@ export default function Home() {
           </div>
           <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 md:grid-cols-3">
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                <CardHeader className="items-center text-center gap-4">
+                <CardHeader className="items-center text-center gap-4 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <Zap className="h-6 w-6 text-primary" />
                     </div>
                     <CardTitle className="text-xl">Instant Code Analysis</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
                     Get a comprehensive analysis of your code in seconds, including a technical debt score and a list of code smells.
                     </p>
               </CardContent>
             </Card>
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                <CardHeader className="items-center text-center gap-4">
+                <CardHeader className="items-center text-center gap-4 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <ShieldCheck className="h-6 w-6 text-primary" />
                     </div>
                     <CardTitle className="text-xl">AI-Powered Refactoring</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
                     Leverage generative AI to automatically refactor your code, improving readability, performance, and maintainability.
                     </p>
               </CardContent>
             </Card>
             <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                <CardHeader className="items-center text-center gap-4">
+                <CardHeader className="items-center text-center gap-4 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <Code className="h-6 w-6 text-primary" />
                     </div>
                     <CardTitle className="text-xl">Git Integration</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
                     Simulate a pre-commit hook that prevents bad code from being committed based on its quality score.
                     </p>
