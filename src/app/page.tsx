@@ -53,9 +53,9 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 py-12 md:grid-cols-3">
-            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                <CardHeader className="items-center text-center gap-4 p-4">
+          <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-8 py-12">
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 sm:w-80">
+                <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <Zap className="h-6 w-6 text-primary" />
                     </div>
@@ -67,8 +67,8 @@ export default function Home() {
                     </p>
               </CardContent>
             </Card>
-            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                <CardHeader className="items-center text-center gap-4 p-4">
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 sm:w-80">
+                <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <ShieldCheck className="h-6 w-6 text-primary" />
                     </div>
@@ -80,8 +80,8 @@ export default function Home() {
                     </p>
               </CardContent>
             </Card>
-            <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                <CardHeader className="items-center text-center gap-4 p-4">
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 sm:w-80">
+                <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <Code className="h-6 w-6 text-primary" />
                     </div>
