@@ -10,8 +10,6 @@ export type AnalysisResult = {
   score: number;
   issues: Issue[];
   explanation: string;
-  perfectCode?: string;
-  perfectCodeExplanation?: string;
 };
 
 export type RefactorState = {
