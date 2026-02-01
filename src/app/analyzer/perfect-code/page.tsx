@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
-import { codeSchema, type GeneratePerfectCodeOutput } from '@/lib/types';
+import { codeSchema } from '@/lib/types';
+import { generatePerfectCode, type GeneratePerfectCodeOutput } from '@/ai/flows/generate-perfect-code';
 import PerfectCodeView from './perfect-code-view';
 import { Diamond, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -7,23 +8,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 
 async function performPerfection(code: string): Promise<GeneratePerfectCodeOutput> {
-    // MOCK AI CALL
-    const mockResult: GeneratePerfectCodeOutput = {
-      perfectCode: `// This is a mock of "perfect" code.
-function findCommonElementsOptimized(arr1, arr2) {
-  const set1 = new Set(arr1);
-  const commonElements = new Set();
-  for (const element of arr2) {
-    if (set1.has(element)) {
-      commonElements.add(element);
-    }
-  }
-  return Array.from(commonElements);
-}`,
-      explanation: "This is a mock explanation. The original code's nested loops resulted in O(n*m) complexity. This 'perfect' version uses a Set for O(1) average time complexity lookups, reducing the overall complexity to O(n+m), which is significantly more performant for large datasets. It is also more readable and maintainable."
-    };
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-    return mockResult;
+    const result = await generatePerfectCode({ code });
+    return result;
 }
 
 export default function PerfectCodePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }}) {

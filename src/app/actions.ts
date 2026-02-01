@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { refactorCode } from '@/ai/flows/refactor-code';
 import { codeSchema, type AnalysisState, type Issue, type RefactorState } from '@/lib/types';
 
 // A mock function to simulate AST analysis and scoring
@@ -89,27 +90,17 @@ export async function getRefactoredCode(
     return { status: 'error', error: 'Missing code or analysis for refactoring.' };
   }
   
-  // MOCK AI CALL
-  await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-
-  const mockResult = {
-      refactoredCode: `// This is a mock refactored code.
-function findCommonElements(arr1, arr2) {
-  const set1 = new Set(arr1);
-  const commonElements = new Set();
-
-  for (const element of arr2) {
-    if (set1.has(element)) {
-      commonElements.add(element);
-    }
+  try {
+    const result = await refactorCode({ code, analysis });
+    return {
+      status: 'success',
+      result: result,
+    };
+  } catch (e: any) {
+    console.error("Refactoring failed:", e);
+    return {
+      status: 'error',
+      error: e.message || 'An unexpected error occurred during refactoring.',
+    };
   }
-  return Array.from(commonElements);
-}`,
-      explanation: "This is a mock explanation. The original nested loops were replaced with a Set for efficient lookups, improving performance from O(n*m) to O(n+m)."
-  };
-
-  return {
-    status: 'success',
-    result: mockResult
-  };
 }
