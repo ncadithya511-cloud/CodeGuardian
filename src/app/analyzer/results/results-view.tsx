@@ -217,18 +217,28 @@ export default function ResultsView({ code, analysisResult }: ResultsViewProps) 
                 </div>
                 <div className="flex flex-col gap-8">
                     <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                    <CardHeader>
-                        <CardTitle>Analysis Report</CardTitle>
-                        <CardDescription>
-                        A summary of code quality metrics and identified issues.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div className="flex items-center justify-center rounded-lg bg-background/50 p-4">
+                        <CardHeader>
+                            <CardTitle>Technical Debt Score</CardTitle>
+                            <CardDescription>
+                                A summary of your code's quality metrics.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-center rounded-lg bg-background/50 p-4">
                             <ScoreChart score={analysisResult.score} />
-                        </div>
-                        <div className="flex flex-col gap-4">
-                            <h3 className="font-semibold text-center md:text-left">Identified Code Smells</h3>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <AlertTriangle className="text-destructive" />
+                                Identified Issues
+                            </CardTitle>
+                            <CardDescription>
+                                Found {analysisResult.issues.length} {analysisResult.issues.length === 1 ? 'issue' : 'issues'} in your code, ranked by severity.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
                             {analysisResult.issues.length > 0 ? (
                                 <Accordion type="single" collapsible className="w-full">
                                     {analysisResult.issues.map((issue, index) => (
@@ -250,39 +260,39 @@ export default function ResultsView({ code, analysisResult }: ResultsViewProps) 
                             ) : (
                                 <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center">
                                     <CheckCircle className="h-8 w-8 text-accent" />
-                                    <p className="text-sm font-medium">No major issues found!</p>
+                                    <p className="text-sm font-medium">No issues found!</p>
                                     <p className="text-xs text-muted-foreground">Great job keeping the code clean.</p>
                                 </div>
                             )}
-                        </div>
-                    </CardContent>
-                  </Card>
-                   <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Bot /> AI Refactoring Suggestions
-                        </CardTitle>
-                        <CardDescription>
-                            The AI Guardian's explanation of the identified issues and how to resolve them.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-border/50 bg-background/50 p-4 font-body relative">
-                          <p>{analysisResult.explanation}</p>
-                          <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => {
-                              navigator.clipboard.writeText(analysisResult.explanation || '');
-                              toast({ title: "Explanation copied to clipboard!" });
-                            }}>
-                            <Copy className="h-4 w-4" />
-                            <span className="sr-only">Copy explanation</span>
-                          </Button>
-                        </div>
-                        <form action={refactorAction} className="mt-4">
-                          <input type="hidden" name="code" value={code} />
-                          <input type="hidden" name="analysis" value={JSON.stringify(analysisResult.issues)} />
-                          <AutoRefactorButton />
-                        </form>
-                    </CardContent>
+                        </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Bot /> AI Refactoring Suggestions
+                            </CardTitle>
+                            <CardDescription>
+                                The AI Guardian's explanation of the identified issues and how to resolve them.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-border/50 bg-background/50 p-4 font-body relative">
+                              <p>{analysisResult.explanation}</p>
+                              <Button variant="ghost" size="icon" className="absolute top-2 right-2" onClick={() => {
+                                  navigator.clipboard.writeText(analysisResult.explanation || '');
+                                  toast({ title: "Explanation copied to clipboard!" });
+                                }}>
+                                <Copy className="h-4 w-4" />
+                                <span className="sr-only">Copy explanation</span>
+                              </Button>
+                            </div>
+                            <form action={refactorAction} className="mt-4">
+                              <input type="hidden" name="code" value={code} />
+                              <input type="hidden" name="analysis" value={JSON.stringify(analysisResult.issues)} />
+                              <AutoRefactorButton />
+                            </form>
+                        </CardContent>
                   </Card>
 
                   {refactorState.status === 'loading' && (
