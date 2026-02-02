@@ -77,15 +77,29 @@ async function AnalysisResults({ code }: { code: string }) {
     try {
         const analysisResult = await performAnalysis(code);
         return <ResultsView code={code} analysisResult={analysisResult} />;
-    } catch (error) {
-        console.error("Analysis failed:", error);
+    } catch (error: any) {
+        // This will provide a more informative error in the server logs
+        // and a more specific message in the UI.
+        console.error("Analysis failed:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        
+        let errorMessage = "An unexpected error occurred during analysis. The AI may be unavailable. Please try again.";
+        if (error instanceof Error && error.message) {
+            errorMessage = error.message;
+        } else if (typeof error === 'string') {
+            errorMessage = error;
+        } else if (error && typeof error.message === 'string') {
+            errorMessage = error.message;
+        } else if (error?.cause?.message) {
+            errorMessage = error.cause.message;
+        }
+
         return (
              <div className="mx-auto max-w-3xl">
                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Analysis Failed</AlertTitle>
                     <AlertDescription>
-                        An unexpected error occurred during analysis. The AI may be unavailable. Please try again.
+                        {errorMessage}
                     </AlertDescription>
                 </Alert>
             </div>
