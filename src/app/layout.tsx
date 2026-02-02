@@ -32,12 +32,6 @@ export default function RootLayout({
                 <h1 className="font-headline text-2xl font-semibold">CodeGuardian</h1>
               </Link>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" asChild>
-                    <Link href="/history">
-                        <History className="mr-2 h-4 w-4" />
-                        History
-                    </Link>
-                </Button>
                 <Button variant="ghost" size="icon" asChild>
                   <a href="https://github.com/FirebaseExtended/firebase-studio-prototypers" target="_blank" rel="noopener noreferrer">
                     <Github className="h-5 w-5" />
