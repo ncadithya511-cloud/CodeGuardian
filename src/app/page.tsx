@@ -51,7 +51,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 justify-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-8 md:grid-cols-3">
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
