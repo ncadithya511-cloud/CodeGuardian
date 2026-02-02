@@ -20,7 +20,7 @@ export default function Home() {
                             AI-Powered Analysis
                         </div>
                         <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                            Unlock Peak Code Quality with AI.
+                            Write Flawless Code with Your AI Guardian.
                         </h1>
                         <p className="max-w-[700px] text-muted-foreground md:text-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
                             CodeGuardian is your AI partner for writing clean, efficient, and secure code. Get instant analysis, debt scoring, and intelligent refactoring.
