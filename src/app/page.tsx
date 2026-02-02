@@ -19,7 +19,7 @@ export default function Home() {
                         AI-Powered Analysis
                     </div>
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                        Meet Your AI <span className="text-primary">Code Guardian</span>
+                        Unlock Peak Code Quality with AI.
                     </h1>
                     <p className="max-w-[700px] text-muted-foreground md:text-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
                         CodeGuardian is your AI partner for writing clean, efficient, and secure code. Get instant analysis, debt scoring, and intelligent refactoring.
@@ -51,13 +51,13 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 justify-center gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 justify-center gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3">
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
-                        <Zap className="h-6 w-6 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
+                        <Zap className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Instant Code Analysis</CardTitle>
+                    <CardTitle className="text-lg">Instant Code Analysis</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
@@ -67,10 +67,10 @@ export default function Home() {
             </Card>
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
-                        <ShieldAlert className="h-6 w-6 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
+                        <ShieldAlert className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Security Vulnerability Scanning</CardTitle>
+                    <CardTitle className="text-lg">Security Vulnerability Scanning</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
@@ -80,10 +80,10 @@ export default function Home() {
             </Card>
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
-                        <ShieldCheck className="h-6 w-6 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
+                        <ShieldCheck className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">AI-Powered Refactoring</CardTitle>
+                    <CardTitle className="text-lg">AI-Powered Refactoring</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
@@ -93,10 +93,10 @@ export default function Home() {
             </Card>
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
-                        <Diamond className="h-6 w-6 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
+                        <Diamond className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">"Perfect" Code Generation</CardTitle>
+                    <CardTitle className="text-lg">"Perfect" Code Generation</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
@@ -106,10 +106,10 @@ export default function Home() {
             </Card>
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
-                        <History className="h-6 w-6 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
+                        <History className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Analysis History</CardTitle>
+                    <CardTitle className="text-lg">Analysis History</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
@@ -119,10 +119,10 @@ export default function Home() {
             </Card>
             <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
-                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
-                        <Code className="h-6 w-6 text-primary" />
+                    <div className="p-2 bg-primary/10 rounded-full w-fit h-fit">
+                        <Code className="h-5 w-5 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Git Integration</CardTitle>
+                    <CardTitle className="text-lg">Git Integration</CardTitle>
                 </CardHeader>
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
