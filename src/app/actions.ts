@@ -3,65 +3,7 @@
 import { redirect } from 'next/navigation';
 import type { AnalysisState, Issue, RefactorState } from '@/lib/types';
 import { codeSchema } from '@/lib/types';
-
-// A mock function to simulate AST analysis and scoring
-export const mockAstAnalysis = async (code: string): Promise<{ score: number, issues: Issue[] }> => {
-  // Simple logic to generate a score and some issues based on code characteristics
-  const lines = code.split('\n').length;
-  const complexityMatch = (code.match(/(if|for|while|case)/g) || []).length;
-  const nestedLoopMatch = code.match(/for.*for/g);
-  const nestedLoops = nestedLoopMatch ? nestedLoopMatch.length : 0;
-  
-  let score = 100;
-  const issues: Issue[] = [];
-
-  // Penalize for long functions
-  if (lines > 30) {
-    const penalty = Math.min((lines - 30) * 0.8, 20);
-    score -= penalty;
-    issues.push({
-      title: 'Long Function',
-      detail: `Function has ${lines} lines. Consider breaking it down into smaller, more manageable functions for better readability and maintenance.`,
-      severity: 'Low'
-    });
-  }
-
-  // Penalize for high cyclomatic complexity
-  if (complexityMatch > 4) {
-    const penalty = Math.min((complexityMatch - 4) * 3, 30);
-    score -= penalty;
-    issues.push({
-      title: 'High Cyclomatic Complexity',
-      detail: `High number of branches (${complexityMatch}) detected. This can make the code hard to test, understand, and maintain.`,
-      severity: 'Medium'
-    });
-  }
-  
-  // Penalize heavily for nested loops
-  if (nestedLoops > 0) {
-    score -= nestedLoops * 25;
-    issues.push({
-      title: 'Nested Loops Detected',
-      detail: `Found ${nestedLoops} instance(s) of nested loops. This can lead to poor performance (O(n^2) or worse) and should be refactored.`,
-      severity: 'High'
-    });
-  }
-
-  // Check for inefficient array operations
-  if (code.includes('.includes(') && (nestedLoops > 0 || complexityMatch > 5)) {
-    score -= 10;
-     issues.push({
-      title: 'Inefficient Array Method in Loop',
-      detail: `Using '.includes()' inside a loop can be inefficient. For large arrays, consider using a Set for faster lookups.`,
-      severity: 'Medium'
-    });
-  }
-
-  score = Math.max(0, Math.round(score));
-
-  return { score, issues };
-};
-
+import { refactorCode } from '@/ai/flows/refactor-code';
 
 export async function analyzeCode(
   prevState: AnalysisState,
@@ -90,26 +32,17 @@ export async function getRefactoredCode(
     return { status: 'error', error: 'Missing code or analysis for refactoring.' };
   }
   
-  // MOCK IMPLEMENTATION to prevent API errors
-  await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-
-  return {
-    status: 'success',
-    result: {
-      refactoredCode: `// This is a mock refactored code response.
-function findCommonElementsOptimized(arr1, arr2) {
-  const set1 = new Set(arr1);
-  const commonElements = new Set();
-  
-  for (const element of arr2) {
-    if (set1.has(element)) {
-      commonElements.add(element);
-    }
+  try {
+    const result = await refactorCode({ code, analysis });
+    return {
+      status: 'success',
+      result: {
+        refactoredCode: result.refactoredCode,
+        explanation: result.explanation,
+      },
+    };
+  } catch (e: any) {
+    console.error("Refactoring failed:", e);
+    return { status: 'error', error: e.message || 'An unexpected error occurred during refactoring.' };
   }
-  
-  return Array.from(commonElements);
-}`,
-      explanation: "The mock refactoring uses a Set for O(1) average time complexity lookups, which is much more efficient than nested loops and the `.includes()` method for large arrays."
-    },
-  };
 }

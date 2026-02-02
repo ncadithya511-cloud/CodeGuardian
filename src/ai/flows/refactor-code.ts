@@ -34,16 +34,12 @@ export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCo
 const prompt = ai.definePrompt({
   name: 'refactorCodePrompt',
   input: {schema: RefactorCodeInputSchema},
+  output: {schema: RefactorCodeOutputSchema},
   prompt: `You are an expert software engineer specializing in code refactoring and optimization.
   Given a code block and an analysis of its issues, your task is to refactor the code to address the identified problems.
   The refactored code should be functionally equivalent to the original but improved in terms of performance, readability, and maintainability.
 
-  Respond with ONLY a valid JSON object with the following structure:
-  {
-    "refactoredCode": "The refactored code block.",
-    "explanation": "A brief explanation of the changes made during refactoring."
-  }
-  
+  Respond with ONLY a valid JSON object that conforms to the output schema.
   Do not include any other text or markdown formatting.
 
   Original Code Block:
@@ -63,16 +59,10 @@ const refactorCodeFlow = ai.defineFlow(
     outputSchema: RefactorCodeOutputSchema,
   },
   async input => {
-    const response = await prompt(input);
-    const jsonString = response.text;
-    try {
-      // The model might return the JSON string wrapped in markdown
-      const cleanedJsonString = jsonString.replace(/^```json\n|```$/g, '');
-      const parsed = JSON.parse(cleanedJsonString);
-      return RefactorCodeOutputSchema.parse(parsed);
-    } catch (e) {
-      console.error("Failed to parse JSON response from AI:", jsonString);
+    const {output} = await prompt(input);
+    if (!output) {
       throw new Error("The AI returned an invalid response. Please try again.");
     }
+    return output;
   }
 );

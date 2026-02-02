@@ -37,6 +37,7 @@ export async function securityAnalysis(input: SecurityAnalysisInput): Promise<Se
 const prompt = ai.definePrompt({
   name: 'securityAnalysisPrompt',
   input: {schema: SecurityAnalysisInputSchema},
+  output: {schema: SecurityAnalysisOutputSchema},
   prompt: `You are a world-class cybersecurity expert and principal software engineer with a specialization in application security (AppSec). You have a deep understanding of the OWASP Top 10, CWE, and common attack vectors.
 
   Given the following code block, your task is to perform a thorough security analysis and identify any potential vulnerabilities. For each vulnerability, you must provide a clear title, a detailed explanation of the risk and remediation, its severity, and the relevant CWE identifier.
@@ -51,20 +52,9 @@ const prompt = ai.definePrompt({
   - Insecure Direct Object References (IDOR)
   - And other common weaknesses.
 
-  If no vulnerabilities are found, return an empty array.
+  If no vulnerabilities are found, return an empty array for the vulnerabilities field.
 
-  Respond with ONLY a valid JSON object with the following structure:
-  {
-    "vulnerabilities": [
-      {
-        "title": "Brief title of the vulnerability",
-        "detail": "Detailed explanation of the risk and remediation.",
-        "severity": "Critical | High | Medium | Low",
-        "cwe": "CWE-ID"
-      }
-    ]
-  }
-
+  Respond with ONLY a valid JSON object that conforms to the output schema.
   Do not include any other text or markdown formatting.
 
   Code Block to Analyze:
@@ -81,15 +71,10 @@ const securityAnalysisFlow = ai.defineFlow(
     outputSchema: SecurityAnalysisOutputSchema,
   },
   async input => {
-    const response = await prompt(input);
-    const jsonString = response.text;
-    try {
-      const cleanedJsonString = jsonString.replace(/^```json\n|```$/g, '');
-      const parsed = JSON.parse(cleanedJsonString);
-      return SecurityAnalysisOutputSchema.parse(parsed);
-    } catch (e) {
-      console.error("Failed to parse JSON response from AI:", jsonString);
+    const {output} = await prompt(input);
+    if (!output) {
       throw new Error("The AI returned an invalid response. Please try again.");
     }
+    return output;
   }
 );
