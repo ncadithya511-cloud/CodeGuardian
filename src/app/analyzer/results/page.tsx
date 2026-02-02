@@ -1,91 +1,40 @@
 import { Suspense } from 'react';
-import { codeSchema, type AnalysisResult, type Issue, type SecurityVulnerability } from '@/lib/types';
+import { codeSchema, type AnalysisResult } from '@/lib/types';
 import ResultsView from './results-view';
 import { Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { analyzeCodeQuality } from '@/ai/flows/analyze-code-quality';
+import { generateCodeExplanations } from '@/ai/flows/generate-code-explanations';
+import { securityAnalysis } from '@/ai/flows/security-analysis';
 
 async function performAnalysis(code: string): Promise<AnalysisResult> {
-    // This is a mock implementation to ensure stability while providing a realistic analysis.
-    // It avoids calling a live AI service which can be prone to failure in this environment.
-    
-    // Simulate network delay for a better user experience
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const [qualityResult, securityResult] = await Promise.all([
+        analyzeCodeQuality({ code }),
+        securityAnalysis({ code }),
+    ]);
 
-    let score = 100;
-    const issues: Issue[] = [];
-    const securityVulnerabilities: SecurityVulnerability[] = [];
-    let explanation = 'The AI explanation is currently unavailable in this stable version. The analysis below is based on static rules.';
+    const issues = qualityResult.issues;
+    const score = qualityResult.score;
+    const securityVulnerabilities = securityResult.vulnerabilities;
 
-    // Rule-based checks to simulate analysis
-    const complexityTriggers = ['for', 'while', 'if', 'switch'];
-    let complexity = 0;
-    complexityTriggers.forEach(trigger => {
-        complexity += (code.match(new RegExp(`\\b${trigger}\\b`, 'g')) || []).length;
-    });
-
-    if (complexity > 5) {
-        issues.push({
-            title: 'High Cyclomatic Complexity',
-            detail: 'The function has a high number of conditional or loop statements. This makes the code difficult to read, test, and maintain. Consider refactoring to simplify the logic.',
-            severity: 'High',
-        });
-        score -= 30;
-    }
-
-    if (code.length > 800) {
-        issues.push({
-            title: 'Long Function',
-            detail: 'This function is quite long, which can make it hard to understand and maintain. Consider breaking it down into smaller, more focused functions.',
-            severity: 'Medium',
-        });
-        score -= 15;
-    }
-
-    if (code.includes('.includes(') && (code.includes('for') || code.includes('while'))) {
-        issues.push({
-            title: 'Potential Performance Issue',
-            detail: 'Using array search methods like `.includes()` inside a loop can lead to poor performance (O(n*m)) on large datasets. Consider using a Set or Map for faster lookups (O(1)).',
-            severity: 'High',
-        });
-        score -= 25;
-    }
-
-    if (code.includes('dangerouslySetInnerHTML')) {
-        securityVulnerabilities.push({
-            title: 'Potential Cross-Site Scripting (XSS)',
-            detail: 'The use of `dangerouslySetInnerHTML` can expose the application to XSS attacks if the rendered content is not properly sanitized. Ensure any HTML set this way is from a trusted source.',
-            severity: 'High',
-            cwe: 'CWE-79',
-        });
-        score -= 20;
-    }
-
-    // Simple syntax error check for unmatched braces.
-    const openBraces = (code.match(/{/g) || []).length;
-    const closeBraces = (code.match(/}/g) || []).length;
-    if (openBraces !== closeBraces) {
-        issues.unshift({ // Add to the beginning of the list
-            title: 'Syntax Error: Unmatched Braces',
-            detail: 'The code has an unequal number of opening and closing curly braces, which will cause it to fail. This is a critical error that needs to be fixed.',
-            severity: 'High',
-        });
-        score = 10; // Drastic penalty for syntax errors
-        explanation = "A critical syntax error was found: the curly braces in the code are not balanced. The code cannot be executed in this state. Please fix the braces to proceed with a more detailed analysis."
+    let explanation = 'Excellent work! The code appears to be clean, efficient, and well-structured. No major issues were found.';
+    if (issues.length > 0 || securityVulnerabilities.length > 0) {
+        try {
+            const explanationResult = await generateCodeExplanations({
+                code,
+                analysis: JSON.stringify({ issues, securityVulnerabilities }, null, 2),
+            });
+            explanation = explanationResult.explanation;
+        } catch (e) {
+            console.error("Failed to generate explanation:", e);
+            explanation = "Could not generate an AI explanation due to an error. Please review the identified issues manually.";
+        }
     }
     
-    if (issues.length > 0 && openBraces === closeBraces) {
-        explanation = 'The analysis identified several areas for improvement. The code exhibits some complexity and potential performance issues that could be addressed to improve maintainability and speed. The AI would recommend refactoring these parts to increase the technical debt score.';
-    }
-
-    if (issues.length === 0 && securityVulnerabilities.length === 0) {
-        score = 100;
-        explanation = 'Excellent work! The code appears to be clean, efficient, and well-structured based on our static analysis. No major issues were found.';
-    }
-
     return {
-        score: Math.max(0, score),
+        score,
         issues,
         explanation,
         securityVulnerabilities,
@@ -129,13 +78,14 @@ async function AnalysisResults({ code }: { code: string }) {
         const analysisResult = await performAnalysis(code);
         return <ResultsView code={code} analysisResult={analysisResult} />;
     } catch (error) {
+        console.error("Analysis failed:", error);
         return (
              <div className="mx-auto max-w-3xl">
                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertTitle>Analysis Failed</AlertTitle>
                     <AlertDescription>
-                        An unexpected error occurred during the analysis. Please try again later.
+                        An unexpected error occurred during analysis. The AI may be unavailable. Please try again.
                     </AlertDescription>
                 </Alert>
             </div>
