@@ -6,10 +6,18 @@ export type Issue = {
   severity: 'High' | 'Medium' | 'Low';
 };
 
+export type SecurityVulnerability = {
+  title: string;
+  detail: string;
+  severity: 'Critical' | 'High' | 'Medium' | 'Low';
+  cwe: string;
+};
+
 export type AnalysisResult = {
   score: number;
   issues: Issue[];
   explanation: string;
+  securityVulnerabilities: SecurityVulnerability[];
 };
 
 export type RefactorState = {

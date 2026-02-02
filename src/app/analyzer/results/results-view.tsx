@@ -3,8 +3,8 @@
 import { useState, useMemo, type FC, useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { getRefactoredCode } from '@/app/actions';
-import type { RefactorState, AnalysisResult } from '@/lib/types';
-import { AlertTriangle, Bot, CheckCircle, Code, Copy, Diamond, FileCode2, Github, Loader2, Sparkles, Wand2, XCircle } from 'lucide-react';
+import type { RefactorState, AnalysisResult, SecurityVulnerability } from '@/lib/types';
+import { AlertTriangle, Bot, CheckCircle, Code, Copy, Diamond, FileCode2, Github, Loader2, Sparkles, Wand2, XCircle, ShieldAlert } from 'lucide-react';
 import { ResponsiveContainer, RadialBarChart, RadialBar, PolarAngleAxis } from 'recharts';
 import {
   Accordion,
@@ -179,7 +179,8 @@ export default function ResultsView({ code, analysisResult, isHistoric = false }
                 technicalDebtScore: analysisResult.score,
                 code: code,
                 issues: analysisResult.issues,
-                explanation: analysisResult.explanation
+                explanation: analysisResult.explanation,
+                securityVulnerabilities: analysisResult.securityVulnerabilities,
             };
             const collectionRef = collection(firestore, `users/${user.uid}/code_analyses`);
             addDocumentNonBlocking(collectionRef, analysisData);
@@ -189,8 +190,18 @@ export default function ResultsView({ code, analysisResult, isHistoric = false }
 
     }, [isHistoric, user, firestore, code, analysisResult]);
 
-    const severityColor = (severity: 'High' | 'Medium' | 'Low') => {
+    const issueSeverityColor = (severity: 'High' | 'Medium' | 'Low') => {
         switch (severity) {
+        case 'High': return 'border-destructive/80 text-destructive';
+        case 'Medium': return 'border-yellow-400/80 text-yellow-400';
+        case 'Low': return 'border-sky-400/80 text-sky-400';
+        default: return 'border-secondary';
+        }
+    }
+    
+    const securitySeverityColor = (severity: SecurityVulnerability['severity']) => {
+        switch (severity) {
+        case 'Critical': return 'border-red-500/80 text-red-500';
         case 'High': return 'border-destructive/80 text-destructive';
         case 'Medium': return 'border-yellow-400/80 text-yellow-400';
         case 'Low': return 'border-sky-400/80 text-sky-400';
@@ -255,10 +266,50 @@ export default function ResultsView({ code, analysisResult, isHistoric = false }
                         </CardContent>
                     </Card>
 
+                    <Card className="bg-destructive/5 backdrop-blur-xl border-destructive/20 shadow-lg shadow-destructive/5">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-destructive">
+                                <ShieldAlert />
+                                Security Vulnerabilities
+                            </CardTitle>
+                            <CardDescription>
+                                Found {analysisResult.securityVulnerabilities.length} potential security {analysisResult.securityVulnerabilities.length === 1 ? 'vulnerability' : 'vulnerabilities'}.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {analysisResult.securityVulnerabilities.length > 0 ? (
+                                <Accordion type="single" collapsible className="w-full">
+                                    {analysisResult.securityVulnerabilities.map((vuln, index) => (
+                                        <AccordionItem value={`item-${index}`} key={index} className="border-border/50 rounded-lg mb-2 bg-card-foreground/5 overflow-hidden">
+                                            <AccordionTrigger className="px-4 py-3 text-sm font-medium hover:no-underline">
+                                                <div className="flex justify-between items-center w-full">
+                                                    <span>{vuln.title}</span>
+                                                    <Badge variant="outline" className={cn("text-xs", securitySeverityColor(vuln.severity))}>
+                                                        {vuln.severity}
+                                                    </Badge>
+                                                </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent className="px-4 pb-3 space-y-2">
+                                                <p className="text-xs text-muted-foreground">{vuln.detail}</p>
+                                                <Badge variant="secondary">{vuln.cwe}</Badge>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-6 text-center">
+                                    <CheckCircle className="h-8 w-8 text-accent" />
+                                    <p className="text-sm font-medium">No security vulnerabilities found!</p>
+                                    <p className="text-xs text-muted-foreground">The Guardian found no obvious vulnerabilities.</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
                     <Card className="bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <AlertTriangle className="text-destructive" />
+                                <AlertTriangle className="text-yellow-400" />
                                 Identified Issues
                             </CardTitle>
                             <CardDescription>
@@ -273,7 +324,7 @@ export default function ResultsView({ code, analysisResult, isHistoric = false }
                                             <AccordionTrigger className="px-4 py-3 text-sm font-medium hover:no-underline">
                                                 <div className="flex justify-between items-center w-full">
                                                     <span>{issue.title}</span>
-                                                    <Badge variant="outline" className={cn("text-xs", severityColor(issue.severity))}>
+                                                    <Badge variant="outline" className={cn("text-xs", issueSeverityColor(issue.severity))}>
                                                         {issue.severity}
                                                     </Badge>
                                                 </div>

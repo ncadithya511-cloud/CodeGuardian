@@ -6,7 +6,7 @@ import { useFirebase, useDoc, useMemoFirebase, type WithId } from '@/firebase';
 import { doc, Timestamp } from 'firebase/firestore';
 import { Loader2, AlertCircle } from 'lucide-react';
 import ResultsView from '@/app/analyzer/results/results-view';
-import type { Issue, AnalysisResult } from '@/lib/types';
+import type { Issue, AnalysisResult, SecurityVulnerability } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 interface AnalysisDoc {
@@ -15,6 +15,7 @@ interface AnalysisDoc {
     issues: Issue[];
     code: string;
     explanation: string;
+    securityVulnerabilities: SecurityVulnerability[];
 }
 
 export default function HistoricAnalysisPage() {
@@ -72,7 +73,8 @@ export default function HistoricAnalysisPage() {
         const analysisResult: AnalysisResult = {
             score: analysisDoc.technicalDebtScore,
             issues: analysisDoc.issues,
-            explanation: analysisDoc.explanation
+            explanation: analysisDoc.explanation,
+            securityVulnerabilities: analysisDoc.securityVulnerabilities || [],
         };
 
         return <ResultsView code={analysisDoc.code} analysisResult={analysisResult} isHistoric={true} />

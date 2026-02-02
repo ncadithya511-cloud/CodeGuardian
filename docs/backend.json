@@ -39,6 +39,20 @@
         "explanation": {
           "type": "string",
           "description": "The AI-generated explanation for the analysis."
+        },
+        "securityVulnerabilities": {
+            "type": "array",
+            "description": "A list of security vulnerabilities found in the code.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "title": { "type": "string" },
+                    "detail": { "type": "string" },
+                    "cwe": { "type": "string" },
+                    "severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] }
+                },
+                "required": ["title", "detail", "cwe", "severity"]
+            }
         }
       },
       "required": [
@@ -47,7 +61,8 @@
         "technicalDebtScore",
         "code",
         "issues",
-        "explanation"
+        "explanation",
+        "securityVulnerabilities"
       ]
     },
     "User": {

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Zap, Code, History, Diamond } from 'lucide-react';
+import { ShieldCheck, Zap, Code, History, Diamond, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
                         AI-Powered Analysis
                     </div>
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                        Unlock Peak Code Quality with <span className="text-primary">AI</span>.
+                        Meet Your AI <span className="text-primary">Code Guardian</span>
                     </h1>
                     <p className="max-w-[700px] text-muted-foreground md:text-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
                         CodeGuardian is your AI partner for writing clean, efficient, and secure code. Get instant analysis, debt scoring, and intelligent refactoring.
@@ -62,6 +62,19 @@ export default function Home() {
                 <CardContent className="px-4 pb-4">
                     <p className="text-sm text-muted-foreground text-center">
                     Get a comprehensive analysis of your code in seconds, including a technical debt score and a list of code smells.
+                    </p>
+              </CardContent>
+            </Card>
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                <CardHeader className="items-center text-center gap-2 p-4">
+                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
+                        <ShieldAlert className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">Security Vulnerability Scanning</CardTitle>
+                </CardHeader>
+                <CardContent className="px-4 pb-4">
+                    <p className="text-sm text-muted-foreground text-center">
+                        Harden your code with an AI-powered security scan that identifies and helps you fix common vulnerabilities.
                     </p>
               </CardContent>
             </Card>

@@ -6,14 +6,16 @@ import { useFirebase, useCollection, useMemoFirebase, type WithId } from '@/fire
 import { collection, query, orderBy, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, ShieldCheck, AlertCircle, FileCode2 } from 'lucide-react';
+import { Loader2, ShieldCheck, AlertCircle, FileCode2, ShieldAlert } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import type { Issue } from '@/lib/types';
+import type { Issue, SecurityVulnerability } from '@/lib/types';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface AnalysisDoc {
     technicalDebtScore: number;
     timestamp: Timestamp;
     issues: Issue[];
+    securityVulnerabilities?: SecurityVulnerability[];
 }
 
 const scoreColor = (score: number) => {
@@ -80,25 +82,42 @@ export default function HistoryPage() {
 
         return (
             <div className="grid gap-6">
-                {analyses.map((analysis) => (
-                    <Link href={`/history/${analysis.id}`} key={analysis.id}>
-                        <Card className="hover:border-primary/80 hover:bg-card-foreground/5 transition-colors">
-                            <CardHeader>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <CardTitle className="text-lg">Analysis from {analysis.timestamp?.toDate().toLocaleString()}</CardTitle>
-                                        <CardDescription>
-                                            Found {analysis.issues.length} issues. Click to view the full report.
-                                        </CardDescription>
+                {analyses.map((analysis) => {
+                    const hasCritical = analysis.securityVulnerabilities?.some(v => v.severity === 'Critical');
+                    return (
+                        <Link href={`/history/${analysis.id}`} key={analysis.id}>
+                            <Card className="hover:border-primary/80 hover:bg-card-foreground/5 transition-colors">
+                                <CardHeader>
+                                    <div className="flex justify-between items-start">
+                                        <div className="space-y-1.5">
+                                            <CardTitle className="text-lg flex items-center gap-2">
+                                                {hasCritical && (
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger>
+                                                                <ShieldAlert className="h-5 w-5 text-red-500" />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>Critical vulnerability detected!</p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                )}
+                                                Analysis from {analysis.timestamp?.toDate().toLocaleString()}
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Found {analysis.issues.length} issues. Click to view the full report.
+                                            </CardDescription>
+                                        </div>
+                                        <div className={`flex items-center justify-center font-bold text-lg size-16 rounded-full ${scoreColor(analysis.technicalDebtScore)}`}>
+                                            {analysis.technicalDebtScore}
+                                        </div>
                                     </div>
-                                     <div className={`flex items-center justify-center font-bold text-lg size-16 rounded-full ${scoreColor(analysis.technicalDebtScore)}`}>
-                                        {analysis.technicalDebtScore}
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-                    </Link>
-                ))}
+                                </CardHeader>
+                            </Card>
+                        </Link>
+                    );
+                })}
             </div>
         );
     }

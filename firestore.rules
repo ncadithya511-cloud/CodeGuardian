@@ -90,7 +90,8 @@ service cloud.firestore {
           && data.code is string
           && data.technicalDebtScore is number
           && data.issues is list
-          && data.explanation is string;
+          && data.explanation is string
+          && data.securityVulnerabilities is list;
     }
 
     /**

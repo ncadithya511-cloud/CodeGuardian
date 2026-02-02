@@ -13,10 +13,26 @@ async function performAnalysis(code: string): Promise<AnalysisResult> {
     // MOCK IMPLEMENTATION to prevent API errors
     const explanation = "This is a mock AI explanation. The original code uses nested loops and `includes`, which is inefficient. A better approach is to use a `Set` for faster lookups to optimize performance from O(n*m) to O(n+m).";
     
+    const securityVulnerabilities = [
+        {
+            "title": "Potential Cross-Site Scripting (XSS)",
+            "detail": "The application appears to render user-provided content without proper sanitization. An attacker could inject malicious scripts that would be executed by other users' browsers. Always sanitize user input before rendering it in the DOM.",
+            "cwe": "CWE-79",
+            "severity": "High" as const
+        },
+        {
+            "title": "Hardcoded Secret/API Key",
+            "detail": "A value that looks like a hardcoded API key or secret was found. Storing secrets directly in source code is highly insecure. Use environment variables or a secret management service.",
+            "cwe": "CWE-798",
+            "severity": "Critical" as const
+        }
+    ];
+
     return {
         score,
         issues,
         explanation,
+        securityVulnerabilities,
     };
 }
 
