@@ -1,11 +1,20 @@
 'use client';
 
-import React, { useMemo, type ReactNode } from 'react';
-import { FirebaseProvider } from '@/firebase/provider';
+import React, { useMemo, type ReactNode, useEffect } from 'react';
+import { FirebaseProvider, useAuth } from '@/firebase/provider';
 import { initializeFirebase } from '@/firebase';
+import { initiateAnonymousSignIn } from './non-blocking-login';
 
 interface FirebaseClientProviderProps {
   children: ReactNode;
+}
+
+const AuthInitializer = () => {
+  const auth = useAuth();
+  useEffect(() => {
+    initiateAnonymousSignIn(auth);
+  }, [auth]);
+  return null;
 }
 
 export function FirebaseClientProvider({ children }: FirebaseClientProviderProps) {
@@ -20,6 +29,7 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
       auth={firebaseServices.auth}
       firestore={firebaseServices.firestore}
     >
+      <AuthInitializer />
       {children}
     </FirebaseProvider>
   );

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Button } from '@/components/ui/button';
-import { Github, ShieldCheck } from 'lucide-react';
+import { Github, History, ShieldCheck } from 'lucide-react';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
@@ -31,12 +31,20 @@ export default function RootLayout({
                 <ShieldCheck className="h-7 w-7 text-primary" />
                 <h1 className="font-headline text-2xl font-semibold">CodeGuardian</h1>
               </Link>
-              <Button variant="ghost" size="icon" asChild>
-                <a href="https://github.com/FirebaseExtended/firebase-studio-prototypers" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-5 w-5" />
-                  <span className="sr-only">GitHub</span>
-                </a>
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" asChild>
+                    <Link href="/history">
+                        <History className="mr-2 h-4 w-4" />
+                        History
+                    </Link>
+                </Button>
+                <Button variant="ghost" size="icon" asChild>
+                  <a href="https://github.com/FirebaseExtended/firebase-studio-prototypers" target="_blank" rel="noopener noreferrer">
+                    <Github className="h-5 w-5" />
+                    <span className="sr-only">GitHub</span>
+                  </a>
+                </Button>
+              </div>
             </header>
             {children}
           </div>

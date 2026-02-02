@@ -4,8 +4,8 @@
  * with their own data tree, providing strong data isolation.
  *
  * Data Structure: All application data is hierarchically organized under the `/users/{userId}` collection. This
- * structure naturally segregates data by owner, simplifying security logic. A user's profile, their code
- * analyses, and the code smells for each analysis are all nested within their unique user document path.
+ * structure naturally segregates data by owner, simplifying security logic. A user's profile, and their code
+ * analyses are all nested within their unique user document path.
  *
  * Key Security Decisions:
  * - Default Deny: All paths are closed by default. Access is granted only through explicit `allow` statements.
@@ -81,39 +81,27 @@ service cloud.firestore {
 
     /**
      * For analysis document creation, ensures the `userId` field within the
-     * document data matches the `userId` in the path.
+     * document data matches the `userId` in the path and the timestamp is valid.
      */
     function hasValidAnalysisCreateData(userId) {
-      return request.resource.data.userId == userId;
+      let data = request.resource.data;
+      return data.userId == userId
+          && data.timestamp == request.time
+          && data.code is string
+          && data.technicalDebtScore is number
+          && data.issues is list
+          && data.explanation is string;
     }
 
     /**
-     * For analysis document updates, ensures the owning `userId` field is immutable.
+     * For analysis document updates, ensures the core data fields are immutable.
      */
     function analysisIsImmutable() {
-      return request.resource.data.userId == resource.data.userId;
-    }
-    
-    /**
-     * For code smell creation, ensures its parent analysis document exists.
-     */
-    function parentAnalysisExists(userId, analysisId) {
-      return exists(/databases/$(database)/documents/users/$(userId)/code_analyses/$(analysisId));
-    }
-    
-    /**
-     * For code smell creation, ensures the `analysisId` field within the
-     * document data matches the `analysisId` in the path.
-     */
-    function hasValidSmellCreateData(analysisId) {
-      return request.resource.data.analysisId == analysisId;
-    }
-    
-    /**
-     * For code smell updates, ensures the parent `analysisId` field is immutable.
-     */
-    function smellIsImmutable() {
-      return request.resource.data.analysisId == resource.data.analysisId;
+      let data = request.resource.data;
+      let oldData = resource.data;
+      return data.userId == oldData.userId
+          && data.timestamp == oldData.timestamp
+          && data.code == oldData.code;
     }
 
     // ------------------------------------------------------------------------
@@ -149,22 +137,6 @@ service cloud.firestore {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId) && hasValidAnalysisCreateData(userId);
       allow update: if isExistingOwner(userId) && analysisIsImmutable();
-      allow delete: if isExistingOwner(userId);
-    }
-    
-    /**
-     * @description A user can manage the code smells associated with one of their specific code analyses.
-     *              Access is inherited from the parent user path.
-     * @path /users/{userId}/code_analyses/{analysisId}/code_smells/{smellId}
-     * @allow (create) User `USER_123` adding a code smell to an analysis they own.
-     * @deny (get) User `USER_456` trying to read a code smell from another user's analysis.
-     * @deny (create) User `USER_123` trying to add a code smell to a non-existent parent analysis.
-     * @principle Validates relational integrity by ensuring a subcollection document's parent exists before creation.
-     */
-    match /users/{userId}/code_analyses/{analysisId}/code_smells/{smellId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId) && parentAnalysisExists(userId, analysisId) && hasValidSmellCreateData(analysisId);
-      allow update: if isExistingOwner(userId) && smellIsImmutable();
       allow delete: if isExistingOwner(userId);
     }
   }

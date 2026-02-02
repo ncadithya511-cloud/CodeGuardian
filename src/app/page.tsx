@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Zap, Code } from 'lucide-react';
+import { ShieldCheck, Zap, Code, History, Diamond } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -13,31 +13,29 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(var(--primary-rgb),0.1),_transparent_40%)] z-0"></div>
         
         <div className="container mx-auto px-4 md:px-6 z-10">
-            <div className="grid gap-6 lg:grid-cols-1 lg:gap-12">
-                <div className="flex flex-col justify-center space-y-4">
-                    <div className="space-y-4">
-                        <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-                            AI-Powered Analysis
-                        </div>
-                        <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-                            Unlock Peak Code Quality with <span className="text-primary">AI</span>.
-                        </h1>
-                        <p className="max-w-[700px] text-muted-foreground md:text-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
-                            CodeGuardian is your AI partner for writing clean, efficient, and secure code. Get instant analysis, debt scoring, and intelligent refactoring.
-                        </p>
+            <div className="flex flex-col justify-center space-y-4">
+                <div className="space-y-4">
+                    <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                        AI-Powered Analysis
                     </div>
-                    <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-350">
-                        <Button asChild size="lg">
-                            <Link href="/analyzer">
-                                Analyze Code Now
-                            </Link>
-                        </Button>
-                        <Button asChild size="lg" variant="outline">
-                            <Link href="#features">
-                                Explore Features
-                            </Link>
-                        </Button>
-                    </div>
+                    <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none font-headline animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                        Unlock Peak Code Quality with <span className="text-primary">AI</span>.
+                    </h1>
+                    <p className="max-w-[700px] text-muted-foreground md:text-xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
+                        CodeGuardian is your AI partner for writing clean, efficient, and secure code. Get instant analysis, debt scoring, and intelligent refactoring.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-350">
+                    <Button asChild size="lg">
+                        <Link href="/analyzer">
+                            Analyze Code Now
+                        </Link>
+                    </Button>
+                    <Button asChild size="lg" variant="outline">
+                        <Link href="#features">
+                            Explore Features
+                        </Link>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -53,8 +51,8 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto flex max-w-5xl justify-center gap-8 py-12">
-            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 sm:w-80">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 justify-center gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3">
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <Zap className="h-6 w-6 text-primary" />
@@ -67,7 +65,7 @@ export default function Home() {
                     </p>
               </CardContent>
             </Card>
-            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 sm:w-80">
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <ShieldCheck className="h-6 w-6 text-primary" />
@@ -80,7 +78,33 @@ export default function Home() {
                     </p>
               </CardContent>
             </Card>
-            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5 sm:w-80">
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                <CardHeader className="items-center text-center gap-2 p-4">
+                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
+                        <Diamond className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">"Perfect" Code Generation</CardTitle>
+                </CardHeader>
+                <CardContent className="px-4 pb-4">
+                    <p className="text-sm text-muted-foreground text-center">
+                    Go beyond refactoring and see the AI's attempt at a flawless, production-grade version of your code.
+                    </p>
+              </CardContent>
+            </Card>
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
+                <CardHeader className="items-center text-center gap-2 p-4">
+                    <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
+                        <History className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">Analysis History</CardTitle>
+                </CardHeader>
+                <CardContent className="px-4 pb-4">
+                    <p className="text-sm text-muted-foreground text-center">
+                      Track your code quality over time. Every analysis is saved, allowing you to monitor progress and identify trends.
+                    </p>
+              </CardContent>
+            </Card>
+            <Card className="w-full bg-card/70 backdrop-blur-xl border-border/50 shadow-lg shadow-primary/5">
                 <CardHeader className="items-center text-center gap-2 p-4">
                     <div className="p-3 bg-primary/10 rounded-full w-fit h-fit">
                         <Code className="h-6 w-6 text-primary" />

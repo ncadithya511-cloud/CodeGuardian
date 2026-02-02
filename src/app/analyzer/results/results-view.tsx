@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, type FC, useActionState } from 'react';
+import { useState, useMemo, type FC, useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { getRefactoredCode } from '@/app/actions';
 import type { RefactorState, AnalysisResult } from '@/lib/types';
@@ -12,6 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useFirebase } from '@/firebase';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 const refactorInitialState: RefactorState = { status: 'idle' };
 
@@ -156,11 +159,35 @@ const GitCommitSimulator: FC<{ score: number }> = ({ score }) => {
 type ResultsViewProps = {
   code: string;
   analysisResult: AnalysisResult;
+  isHistoric?: boolean;
 }
 
-export default function ResultsView({ code, analysisResult }: ResultsViewProps) {
+export default function ResultsView({ code, analysisResult, isHistoric = false }: ResultsViewProps) {
     const { toast } = useToast();
     const [refactorState, refactorAction] = useActionState(getRefactoredCode, refactorInitialState);
+    const { firestore, user } = useFirebase();
+
+    useEffect(() => {
+        if (isHistoric || !user || !firestore) {
+            return;
+        }
+
+        const saveAnalysis = async () => {
+            const analysisData = {
+                userId: user.uid,
+                timestamp: serverTimestamp(),
+                technicalDebtScore: analysisResult.score,
+                code: code,
+                issues: analysisResult.issues,
+                explanation: analysisResult.explanation
+            };
+            const collectionRef = collection(firestore, `users/${user.uid}/code_analyses`);
+            addDocumentNonBlocking(collectionRef, analysisData);
+        };
+
+        saveAnalysis();
+
+    }, [isHistoric, user, firestore, code, analysisResult]);
 
     const severityColor = (severity: 'High' | 'Medium' | 'Low') => {
         switch (severity) {
@@ -177,7 +204,7 @@ export default function ResultsView({ code, analysisResult }: ResultsViewProps) 
                 <div className="space-y-1">
                     <h1 className="font-headline text-3xl font-bold tracking-tight">Analysis Report</h1>
                     <p className="text-muted-foreground">
-                        Here's what the AI Guardian found in your code.
+                        {isHistoric ? "This is a saved analysis report." : "Here's what the AI Guardian found in your code."}
                     </p>
                 </div>
                 <Button asChild variant="outline">
