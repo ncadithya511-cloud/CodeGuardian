@@ -1,24 +1,19 @@
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent using Gemini 1.5 Flash.
+ * @fileOverview A code explanation AI agent.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const GenerateCodeExplanationsInputSchema = z.object({
-  code: z.string(),
-  analysis: z.string(),
-});
-export type GenerateCodeExplanationsInput = z.infer<typeof GenerateCodeExplanationsInputSchema>;
+import { z } from 'zod';
 
 const GenerateCodeExplanationsOutputSchema = z.object({
   explanation: z.string(),
 });
+
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
-export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
+export async function generateCodeExplanations(input: { code: string, analysis: string }): Promise<GenerateCodeExplanationsOutput> {
   const { text } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
     prompt: `Explain the refactoring suggestions for this code based on the provided analysis.

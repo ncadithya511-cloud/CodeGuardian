@@ -1,24 +1,20 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating flawless code using Gemini 1.5 Flash.
+ * @fileOverview An AI agent for generating flawless code.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const GeneratePerfectCodeInputSchema = z.object({
-  code: z.string(),
-});
-export type GeneratePerfectCodeInput = z.infer<typeof GeneratePerfectCodeInputSchema>;
+import { z } from 'zod';
 
 const GeneratePerfectCodeOutputSchema = z.object({
   perfectCode: z.string(),
   explanation: z.string(),
 });
+
 export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutputSchema>;
 
-export async function generatePerfectCode(input: GeneratePerfectCodeInput): Promise<GeneratePerfectCodeOutput> {
+export async function generatePerfectCode(input: { code: string }): Promise<GeneratePerfectCodeOutput> {
   const { text } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
     prompt: `Rewrite the following code to be 100% perfect, optimized, secure, and clean.

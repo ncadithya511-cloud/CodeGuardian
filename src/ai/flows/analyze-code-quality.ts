@@ -1,16 +1,11 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for analyzing code quality using Gemini 1.5 Flash.
+ * @fileOverview An AI agent for analyzing code quality.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const AnalyzeCodeQualityInputSchema = z.object({
-  code: z.string().describe("The code block to be analyzed."),
-});
-export type AnalyzeCodeQualityInput = z.infer<typeof AnalyzeCodeQualityInputSchema>;
+import { z } from 'zod';
 
 const AnalyzeCodeQualityOutputSchema = z.object({
   score: z.number().int().min(0).max(100),
@@ -20,9 +15,10 @@ const AnalyzeCodeQualityOutputSchema = z.object({
     severity: z.enum(["High", "Medium", "Low"])
   })),
 });
+
 export type AnalyzeCodeQualityOutput = z.infer<typeof AnalyzeCodeQualityOutputSchema>;
 
-export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promise<AnalyzeCodeQualityOutput> {
+export async function analyzeCodeQuality(input: { code: string }): Promise<AnalyzeCodeQualityOutput> {
   const { text } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
     prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.

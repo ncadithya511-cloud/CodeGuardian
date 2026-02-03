@@ -1,25 +1,20 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for refactoring code using Gemini 1.5 Flash.
+ * @fileOverview An AI agent for refactoring code.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const RefactorCodeInputSchema = z.object({
-  code: z.string(),
-  analysis: z.string(),
-});
-export type RefactorCodeInput = z.infer<typeof RefactorCodeInputSchema>;
+import { z } from 'zod';
 
 const RefactorCodeOutputSchema = z.object({
   refactoredCode: z.string(),
   explanation: z.string()
 });
+
 export type RefactorCodeOutput = z.infer<typeof RefactorCodeOutputSchema>;
 
-export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCodeOutput> {
+export async function refactorCode(input: { code: string, analysis: string }): Promise<RefactorCodeOutput> {
   const { text } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
     prompt: `You are an expert software engineer specializing in code refactoring.

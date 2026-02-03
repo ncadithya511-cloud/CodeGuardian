@@ -1,16 +1,11 @@
 'use server';
 
 /**
- * @fileOverview An AI security expert using Gemini 1.5 Flash.
+ * @fileOverview An AI security expert.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const SecurityAnalysisInputSchema = z.object({
-  code: z.string(),
-});
-export type SecurityAnalysisInput = z.infer<typeof SecurityAnalysisInputSchema>;
+import { z } from 'zod';
 
 const SecurityAnalysisOutputSchema = z.object({
   vulnerabilities: z.array(z.object({
@@ -20,9 +15,10 @@ const SecurityAnalysisOutputSchema = z.object({
     cwe: z.string(),
   })),
 });
+
 export type SecurityAnalysisOutput = z.infer<typeof SecurityAnalysisOutputSchema>;
 
-export async function securityAnalysis(input: SecurityAnalysisInput): Promise<SecurityAnalysisOutput> {
+export async function securityAnalysis(input: { code: string }): Promise<SecurityAnalysisOutput> {
   const { text } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
     prompt: `Perform a deep security audit on the following code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.

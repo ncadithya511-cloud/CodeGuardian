@@ -1,24 +1,20 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating code documentation using Gemini 1.5 Flash.
+ * @fileOverview An AI agent for generating code documentation.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const GenerateDocumentationInputSchema = z.object({
-  code: z.string().describe("The code block to generate documentation for."),
-});
-export type GenerateDocumentationInput = z.infer<typeof GenerateDocumentationInputSchema>;
+import { z } from 'zod';
 
 const GenerateDocumentationOutputSchema = z.object({
   documentedCode: z.string(),
   explanation: z.string(),
 });
+
 export type GenerateDocumentationOutput = z.infer<typeof GenerateDocumentationOutputSchema>;
 
-export async function generateDocumentation(input: GenerateDocumentationInput): Promise<GenerateDocumentationOutput> {
+export async function generateDocumentation(input: { code: string }): Promise<GenerateDocumentationOutput> {
   const { text } = await ai.generate({
     model: 'googleai/gemini-1.5-flash',
     prompt: `You are an AI specialized in technical writing and software engineering documentation. 
