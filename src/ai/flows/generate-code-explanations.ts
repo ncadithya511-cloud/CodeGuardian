@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent using hardcoded gemini-pro.
+ * @fileOverview A code explanation AI agent using hardcoded gemini-1.5-flash.
  */
 
 import {ai} from '@/ai/genkit';
@@ -19,8 +19,9 @@ const GenerateCodeExplanationsOutputSchema = z.object({
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
 export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.5-flash',
     prompt: `Explain the refactoring suggestions for this code.
 
     Code:

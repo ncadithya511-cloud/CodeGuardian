@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for refactoring code using hardcoded gemini-pro.
+ * @fileOverview An AI agent for refactoring code using hardcoded gemini-1.5-flash.
  */
 
 import {ai} from '@/ai/genkit';
@@ -20,8 +20,9 @@ const RefactorCodeOutputSchema = z.object({
 export type RefactorCodeOutput = z.infer<typeof RefactorCodeOutputSchema>;
 
 export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCodeOutput> {
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.5-flash',
     prompt: `You are an expert software engineer specializing in code refactoring and optimization.
     Given a code block and an analysis of its issues, refactor the code to address the problems.
 

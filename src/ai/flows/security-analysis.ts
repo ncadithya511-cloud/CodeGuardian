@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI security expert using hardcoded gemini-pro.
+ * @fileOverview An AI security expert using hardcoded gemini-1.5-flash.
  */
 
 import {ai} from '@/ai/genkit';
@@ -23,8 +23,9 @@ const SecurityAnalysisOutputSchema = z.object({
 export type SecurityAnalysisOutput = z.infer<typeof SecurityAnalysisOutputSchema>;
 
 export async function securityAnalysis(input: SecurityAnalysisInput): Promise<SecurityAnalysisOutput> {
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.5-flash',
     prompt: `Perform a deep security audit on this code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
 
     Code:

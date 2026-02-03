@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for analyzing code quality using hardcoded gemini-pro.
+ * @fileOverview An AI agent for analyzing code quality using hardcoded gemini-1.5-flash.
  */
 
 import {ai} from '@/ai/genkit';
@@ -23,8 +23,9 @@ const AnalyzeCodeQualityOutputSchema = z.object({
 export type AnalyzeCodeQualityOutput = z.infer<typeof AnalyzeCodeQualityOutputSchema>;
 
 export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promise<AnalyzeCodeQualityOutput> {
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.5-flash',
     prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
     Calculate a Technical Debt Score (0-100), where 100 is perfect.
     Identify specific issues with clear titles, descriptions, and severity.

@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating code documentation using hardcoded gemini-pro.
+ * @fileOverview An AI agent for generating code documentation using hardcoded gemini-1.5-flash.
  */
 
 import {ai} from '@/ai/genkit';
@@ -19,8 +19,9 @@ const GenerateDocumentationOutputSchema = z.object({
 export type GenerateDocumentationOutput = z.infer<typeof GenerateDocumentationOutputSchema>;
 
 export async function generateDocumentation(input: GenerateDocumentationInput): Promise<GenerateDocumentationOutput> {
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.5-flash',
     prompt: `You are an AI specialized in technical writing. Add professional documentation (JSDoc/TSDoc) to the code.
 
     Code Block:

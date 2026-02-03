@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating flawless code using hardcoded gemini-pro.
+ * @fileOverview An AI agent for generating flawless code using hardcoded gemini-1.5-flash.
  */
 
 import {ai} from '@/ai/genkit';
@@ -19,8 +19,9 @@ const GeneratePerfectCodeOutputSchema = z.object({
 export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutputSchema>;
 
 export async function generatePerfectCode(input: GeneratePerfectCodeInput): Promise<GeneratePerfectCodeOutput> {
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: 'googleai/gemini-pro',
+    model: 'googleai/gemini-1.5-flash',
     prompt: `Rewrite this code to be 100% perfect, optimized, secure, and clean.
 
     Original Code:
