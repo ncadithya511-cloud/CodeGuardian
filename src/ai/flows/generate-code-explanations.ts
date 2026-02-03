@@ -1,11 +1,12 @@
+
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent using hardcoded gemini-1.5-flash.
+ * @fileOverview A code explanation AI agent using OpenAI GPT-4o.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const GenerateCodeExplanationsInputSchema = z.object({
   code: z.string(),
@@ -19,28 +20,19 @@ const GenerateCodeExplanationsOutputSchema = z.object({
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
 export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
-  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
-  const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
-    prompt: `Explain the refactoring suggestions for this code.
+  const { output } = await ai.generate({
+    model: 'openai/gpt-4o',
+    input: input,
+    prompt: `Explain the refactoring suggestions for this code based on the provided analysis.
 
     Code:
-    ${input.code}
+    {{{code}}}
 
     Analysis:
-    ${input.analysis}
-
-    Respond with ONLY a valid JSON object matching this schema:
-    {
-      "explanation": "string"
-    }
-    Do not include markdown code blocks or any other text.`,
+    {{{analysis}}}`,
+    output: { schema: GenerateCodeExplanationsOutputSchema }
   });
 
-  try {
-    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned) as GenerateCodeExplanationsOutput;
-  } catch (e) {
-    throw new Error("The AI returned an invalid response format. Please try again.");
-  }
+  if (!output) throw new Error("AI failed to generate code explanations.");
+  return output;
 }

@@ -1,11 +1,12 @@
+
 'use server';
 
 /**
- * @fileOverview An AI security expert using hardcoded gemini-1.5-flash.
+ * @fileOverview An AI security expert using OpenAI GPT-4o.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const SecurityAnalysisInputSchema = z.object({
   code: z.string(),
@@ -23,34 +24,16 @@ const SecurityAnalysisOutputSchema = z.object({
 export type SecurityAnalysisOutput = z.infer<typeof SecurityAnalysisOutputSchema>;
 
 export async function securityAnalysis(input: SecurityAnalysisInput): Promise<SecurityAnalysisOutput> {
-  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
-  const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
-    prompt: `Perform a deep security audit on this code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
+  const { output } = await ai.generate({
+    model: 'openai/gpt-4o',
+    input: input,
+    prompt: `Perform a deep security audit on the following code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
 
     Code:
-    '''
-    ${input.code}
-    '''
-
-    Respond with ONLY a valid JSON object matching this schema:
-    {
-      "vulnerabilities": [
-        {
-          "title": "string",
-          "detail": "string",
-          "severity": "Critical" | "High" | "Medium" | "Low",
-          "cwe": "string"
-        }
-      ]
-    }
-    Do not include markdown code blocks or any other text.`,
+    {{{code}}}`,
+    output: { schema: SecurityAnalysisOutputSchema }
   });
 
-  try {
-    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-    return JSON.parse(cleaned) as SecurityAnalysisOutput;
-  } catch (e) {
-    throw new Error("The AI returned an invalid response format. Please try again.");
-  }
+  if (!output) throw new Error("AI failed to generate security analysis.");
+  return output;
 }

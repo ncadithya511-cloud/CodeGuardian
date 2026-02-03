@@ -1,3 +1,4 @@
+
 import { Suspense } from 'react';
 import { codeSchema, type AnalysisResult } from '@/lib/types';
 import ResultsView from './results-view';
@@ -84,7 +85,7 @@ async function AnalysisResults({ code }: { code: string }) {
                     <AlertDescription>
                         <p className="font-semibold">Error Detail:</p>
                         <code className="text-xs block mt-2 bg-background/50 p-2 rounded">{errorDetail}</code>
-                        <p className="mt-4">This usually indicates the AI service is unreachable or the model identifier is incorrect for your region. Please try again shortly.</p>
+                        <p className="mt-4">This usually indicates the AI service (OpenAI) is unreachable or your API key is invalid. Please check your OPENAI_API_KEY environment variable.</p>
                     </AlertDescription>
                 </Alert>
             </div>
@@ -100,7 +101,7 @@ function LoadingState() {
                 <Card className="flex flex-col items-center justify-center gap-4 p-8 text-center min-h-[400px] bg-card/70 backdrop-blur-xl border-border/50">
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
                     <h2 className="text-xl font-semibold text-primary">Guardian is Thinking...</h2>
-                    <p className="max-w-md text-muted-foreground">Consulting Gemini 1.5 Pro for deep architectural analysis.</p>
+                    <p className="max-w-md text-muted-foreground">Consulting OpenAI GPT-4o for deep architectural analysis.</p>
                 </Card>
             </div>
         </div>
