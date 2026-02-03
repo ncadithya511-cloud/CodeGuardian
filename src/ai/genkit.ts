@@ -1,9 +1,13 @@
 
 import { genkit } from 'genkit';
-import { openai } from 'genkitx-openai';
+import { googleAI } from '@genkit-ai/google-genai';
 
+/**
+ * Genkit instance configured for Google AI (Gemini).
+ * Using stable v1 API to ensure maximum compatibility.
+ */
 export const ai = genkit({
   plugins: [
-    openai(),
+    googleAI({ apiVersion: 'v1' }),
   ],
 });

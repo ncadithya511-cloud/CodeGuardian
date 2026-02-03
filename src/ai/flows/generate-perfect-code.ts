@@ -2,11 +2,12 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating flawless code using OpenAI GPT-4o.
+ * @fileOverview An AI agent for generating flawless code using Gemini 1.5 Flash.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 
 const GeneratePerfectCodeInputSchema = z.object({
   code: z.string(),
@@ -20,16 +21,26 @@ const GeneratePerfectCodeOutputSchema = z.object({
 export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutputSchema>;
 
 export async function generatePerfectCode(input: GeneratePerfectCodeInput): Promise<GeneratePerfectCodeOutput> {
-  const { output } = await ai.generate({
-    model: 'openai/gpt-4o',
-    input: input,
+  const { text } = await ai.generate({
+    model: googleAI.model('gemini-1.5-flash'),
     prompt: `Rewrite the following code to be 100% perfect, optimized, secure, and clean.
 
+    IMPORTANT: Your response must be a single, valid JSON object matching this structure:
+    {
+      "perfectCode": "string",
+      "explanation": "string"
+    }
+
     Original Code:
-    {{{code}}}`,
-    output: { schema: GeneratePerfectCodeOutputSchema }
+    ${input.code}`,
   });
 
-  if (!output) throw new Error("AI failed to generate perfect code.");
-  return output;
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON found in response");
+    const parsed = JSON.parse(jsonMatch[0]);
+    return GeneratePerfectCodeOutputSchema.parse(parsed);
+  } catch (e) {
+    throw new Error("AI failed to generate perfect code.");
+  }
 }

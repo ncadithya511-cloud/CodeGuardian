@@ -2,11 +2,12 @@
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent using OpenAI GPT-4o.
+ * @fileOverview A code explanation AI agent using Gemini 1.5 Flash.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 
 const GenerateCodeExplanationsInputSchema = z.object({
   code: z.string(),
@@ -20,19 +21,28 @@ const GenerateCodeExplanationsOutputSchema = z.object({
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
 export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
-  const { output } = await ai.generate({
-    model: 'openai/gpt-4o',
-    input: input,
+  const { text } = await ai.generate({
+    model: googleAI.model('gemini-1.5-flash'),
     prompt: `Explain the refactoring suggestions for this code based on the provided analysis.
 
+    IMPORTANT: Your response must be a single, valid JSON object matching this structure:
+    {
+      "explanation": "string"
+    }
+
     Code:
-    {{{code}}}
+    ${input.code}
 
     Analysis:
-    {{{analysis}}}`,
-    output: { schema: GenerateCodeExplanationsOutputSchema }
+    ${input.analysis}`,
   });
 
-  if (!output) throw new Error("AI failed to generate code explanations.");
-  return output;
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No JSON found in response");
+    const parsed = JSON.parse(jsonMatch[0]);
+    return GenerateCodeExplanationsOutputSchema.parse(parsed);
+  } catch (e) {
+    throw new Error("AI failed to generate code explanations.");
+  }
 }
