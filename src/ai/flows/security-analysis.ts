@@ -7,20 +7,18 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const VulnerabilitySchema = z.object({
-  title: z.string(),
-  detail: z.string(),
-  severity: z.enum(["Critical", "High", "Medium", "Low"]),
-  cwe: z.string(),
-});
-
 const SecurityAnalysisInputSchema = z.object({
   code: z.string(),
 });
 export type SecurityAnalysisInput = z.infer<typeof SecurityAnalysisInputSchema>;
 
 const SecurityAnalysisOutputSchema = z.object({
-  vulnerabilities: z.array(VulnerabilitySchema),
+  vulnerabilities: z.array(z.object({
+    title: z.string(),
+    detail: z.string(),
+    severity: z.enum(["Critical", "High", "Medium", "Low"]),
+    cwe: z.string(),
+  })),
 });
 export type SecurityAnalysisOutput = z.infer<typeof SecurityAnalysisOutputSchema>;
 
@@ -30,7 +28,7 @@ export async function securityAnalysis(input: SecurityAnalysisInput): Promise<Se
 
 const prompt = ai.definePrompt({
   name: 'securityAnalysisPrompt',
-  model: 'googleai/gemini-1.5-pro',
+  model: 'googleai/gemini-1.5-pro', // HARDCODED
   input: {schema: SecurityAnalysisInputSchema},
   prompt: `Perform a deep security audit on this code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
 
@@ -57,7 +55,6 @@ const securityAnalysisFlow = ai.defineFlow(
   {
     name: 'securityAnalysisFlow',
     inputSchema: SecurityAnalysisInputSchema,
-    outputSchema: SecurityAnalysisOutputSchema,
   },
   async input => {
     const {text} = await prompt(input);

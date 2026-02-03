@@ -7,12 +7,6 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const IssueSchema = z.object({
-  title: z.string().describe('A brief, clear title for the issue.'),
-  detail: z.string().describe('A detailed explanation of the issue.'),
-  severity: z.enum(["High", "Medium", "Low"]).describe('The severity of the issue.'),
-});
-
 const AnalyzeCodeQualityInputSchema = z.object({
   code: z.string().describe("The code block to be analyzed."),
 });
@@ -20,7 +14,11 @@ export type AnalyzeCodeQualityInput = z.infer<typeof AnalyzeCodeQualityInputSche
 
 const AnalyzeCodeQualityOutputSchema = z.object({
   score: z.number().int().min(0).max(100).describe('The technical debt score (0-100).'),
-  issues: z.array(IssueSchema).describe('List of identified issues.'),
+  issues: z.array(z.object({
+    title: z.string(),
+    detail: z.string(),
+    severity: z.enum(["High", "Medium", "Low"])
+  })).describe('List of identified issues.'),
 });
 export type AnalyzeCodeQualityOutput = z.infer<typeof AnalyzeCodeQualityOutputSchema>;
 
@@ -30,7 +28,7 @@ export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promis
 
 const prompt = ai.definePrompt({
   name: 'analyzeCodeQualityPrompt',
-  model: 'googleai/gemini-1.5-pro',
+  model: 'googleai/gemini-1.5-pro', // HARDCODED
   input: {schema: AnalyzeCodeQualityInputSchema},
   prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
   Calculate a Technical Debt Score (0-100), where 100 is perfect.
@@ -59,12 +57,10 @@ const analyzeCodeQualityFlow = ai.defineFlow(
   {
     name: 'analyzeCodeQualityFlow',
     inputSchema: AnalyzeCodeQualityInputSchema,
-    outputSchema: AnalyzeCodeQualityOutputSchema,
   },
   async input => {
     const {text} = await prompt(input);
     try {
-      // Handle potential markdown formatting
       const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
       return JSON.parse(cleaned) as AnalyzeCodeQualityOutput;
     } catch (e) {

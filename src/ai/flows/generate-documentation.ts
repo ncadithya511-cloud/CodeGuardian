@@ -24,7 +24,7 @@ export async function generateDocumentation(input: GenerateDocumentationInput): 
 
 const prompt = ai.definePrompt({
   name: 'generateDocumentationPrompt',
-  model: 'googleai/gemini-1.5-pro',
+  model: 'googleai/gemini-1.5-pro', // HARDCODED
   input: {schema: GenerateDocumentationInputSchema},
   prompt: `You are an AI specialized in technical writing and software documentation. 
   Your task is to take the provided code block and add comprehensive, professional-grade documentation (JSDoc for JavaScript, TSDoc for TypeScript).
@@ -52,7 +52,6 @@ const generateDocumentationFlow = ai.defineFlow(
   {
     name: 'generateDocumentationFlow',
     inputSchema: GenerateDocumentationInputSchema,
-    outputSchema: GenerateDocumentationOutputSchema,
   },
   async input => {
     const {text} = await prompt(input);

@@ -24,7 +24,7 @@ export async function generatePerfectCode(input: GeneratePerfectCodeInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'generatePerfectCodePrompt',
-  model: 'googleai/gemini-1.5-pro',
+  model: 'googleai/gemini-1.5-pro', // HARDCODED
   input: {schema: GeneratePerfectCodeInputSchema},
   prompt: `Rewrite this code to be 100% perfect, optimized, secure, and clean.
 
@@ -45,7 +45,6 @@ const generatePerfectCodeFlow = ai.defineFlow(
   {
     name: 'generatePerfectCodeFlow',
     inputSchema: GeneratePerfectCodeInputSchema,
-    outputSchema: GeneratePerfectCodeOutputSchema,
   },
   async input => {
     const {text} = await prompt(input);

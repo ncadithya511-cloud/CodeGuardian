@@ -24,7 +24,7 @@ export async function generateCodeExplanations(input: GenerateCodeExplanationsIn
 
 const prompt = ai.definePrompt({
   name: 'generateCodeExplanationsPrompt',
-  model: 'googleai/gemini-1.5-pro',
+  model: 'googleai/gemini-1.5-pro', // HARDCODED
   input: {schema: GenerateCodeExplanationsInputSchema},
   prompt: `Explain the refactoring suggestions for this code in a way that is easy for developers to understand.
 
@@ -45,7 +45,6 @@ const generateCodeExplanationsFlow = ai.defineFlow(
   {
     name: 'generateCodeExplanationsFlow',
     inputSchema: GenerateCodeExplanationsInputSchema,
-    outputSchema: GenerateCodeExplanationsOutputSchema,
   },
   async input => {
     const {text} = await prompt(input);
