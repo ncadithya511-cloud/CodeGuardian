@@ -23,12 +23,23 @@ export type GenerateDocumentationOutput = z.infer<typeof GenerateDocumentationOu
 export async function generateDocumentation(input: GenerateDocumentationInput): Promise<GenerateDocumentationOutput> {
   const { text } = await ai.generate({
     model: googleAI.model('gemini-1.5-flash'),
-    prompt: `You are an AI specialized in technical writing. Add professional documentation (JSDoc/TSDoc) to the code.
+    config: {
+      apiVersion: 'v1beta',
+    },
+    prompt: `You are an AI specialized in technical writing and software engineering documentation. 
+    Your task is to add professional documentation (JSDoc for JavaScript or TSDoc for TypeScript) to the provided code block.
+    
+    Ensure the documentation includes:
+    1. A clear description of the function or class's purpose.
+    2. Detailed @param tags for all arguments, including their types and descriptions.
+    3. A @returns tag describing the return value and its type.
+    4. @throws tags if the code can throw specific errors.
+    5. @example tags if the logic is complex.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:
     {
-      "documentedCode": "string",
-      "explanation": "string"
+      "documentedCode": "The original code with integrated JSDoc/TSDoc comments",
+      "explanation": "A short summary of what documentation was added and why"
     }
 
     Code Block:
@@ -41,6 +52,6 @@ export async function generateDocumentation(input: GenerateDocumentationInput): 
     const parsed = JSON.parse(jsonMatch[0]);
     return GenerateDocumentationOutputSchema.parse(parsed);
   } catch (e) {
-    throw new Error("AI failed to generate documentation.");
+    throw new Error("AI failed to generate documentation. The response was not valid JSON.");
   }
 }
