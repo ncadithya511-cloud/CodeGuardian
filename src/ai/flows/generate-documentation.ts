@@ -26,7 +26,6 @@ const prompt = ai.definePrompt({
   name: 'generateDocumentationPrompt',
   model: 'googleai/gemini-1.5-pro',
   input: {schema: GenerateDocumentationInputSchema},
-  output: {schema: GenerateDocumentationOutputSchema},
   prompt: `You are an AI specialized in technical writing and software documentation. 
   Your task is to take the provided code block and add comprehensive, professional-grade documentation (JSDoc for JavaScript, TSDoc for TypeScript).
 
@@ -36,14 +35,17 @@ const prompt = ai.definePrompt({
   - Ensure the documentation is clear, accurate, and follows industry standard conventions.
   - Do not change the underlying logic of the code.
 
-  Respond with ONLY a valid JSON object that conforms to the output schema.
-  Do not include any other text or markdown formatting.
+  Respond with ONLY a valid JSON object matching this schema:
+  {
+    "documentedCode": "string",
+    "explanation": "string"
+  }
+  Do not include markdown code blocks or any other text.
 
   Code Block:
   '''
   {{code}}
-  '''
-  `,
+  '''`,
 });
 
 const generateDocumentationFlow = ai.defineFlow(
@@ -53,10 +55,13 @@ const generateDocumentationFlow = ai.defineFlow(
     outputSchema: GenerateDocumentationOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    if (!output) {
-      throw new Error("The AI returned an invalid response. Please try again.");
+    const {text} = await prompt(input);
+    try {
+      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as GenerateDocumentationOutput;
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", text);
+      throw new Error("The AI returned an invalid response format. Please try again.");
     }
-    return output;
   }
 );

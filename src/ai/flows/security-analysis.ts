@@ -32,14 +32,25 @@ const prompt = ai.definePrompt({
   name: 'securityAnalysisPrompt',
   model: 'googleai/gemini-1.5-pro',
   input: {schema: SecurityAnalysisInputSchema},
-  output: {schema: SecurityAnalysisOutputSchema},
   prompt: `Perform a deep security audit on this code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
 
   Code:
   '''
   {{code}}
   '''
-  `,
+
+  Respond with ONLY a valid JSON object matching this schema:
+  {
+    "vulnerabilities": [
+      {
+        "title": "string",
+        "detail": "string",
+        "severity": "Critical" | "High" | "Medium" | "Low",
+        "cwe": "string"
+      }
+    ]
+  }
+  Do not include markdown code blocks or any other text.`,
 });
 
 const securityAnalysisFlow = ai.defineFlow(
@@ -49,8 +60,13 @@ const securityAnalysisFlow = ai.defineFlow(
     outputSchema: SecurityAnalysisOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    if (!output) throw new Error("AI failed to generate security analysis.");
-    return output;
+    const {text} = await prompt(input);
+    try {
+      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as SecurityAnalysisOutput;
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", text);
+      throw new Error("The AI returned an invalid response format. Please try again.");
+    }
   }
 );

@@ -31,13 +31,16 @@ const prompt = ai.definePrompt({
   name: 'refactorCodePrompt',
   model: 'googleai/gemini-1.5-pro',
   input: {schema: RefactorCodeInputSchema},
-  output: {schema: RefactorCodeOutputSchema},
   prompt: `You are an expert software engineer specializing in code refactoring and optimization.
   Given a code block and an analysis of its issues, your task is to refactor the code to address the identified problems.
   The refactored code should be functionally equivalent to the original but improved in terms of performance, readability, and maintainability.
 
-  Respond with ONLY a valid JSON object that conforms to the output schema.
-  Do not include any other text or markdown formatting.
+  Respond with ONLY a valid JSON object matching this schema:
+  {
+    "refactoredCode": "string",
+    "explanation": "string"
+  }
+  Do not include markdown code blocks or any other text.
 
   Original Code Block:
   '''
@@ -45,8 +48,7 @@ const prompt = ai.definePrompt({
   '''
 
   Analysis of Issues (in JSON format):
-  {{analysis}}
-  `,
+  {{analysis}}`,
 });
 
 const refactorCodeFlow = ai.defineFlow(
@@ -56,10 +58,13 @@ const refactorCodeFlow = ai.defineFlow(
     outputSchema: RefactorCodeOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    if (!output) {
-      throw new Error("The AI returned an invalid response. Please try again.");
+    const {text} = await prompt(input);
+    try {
+      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as RefactorCodeOutput;
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", text);
+      throw new Error("The AI returned an invalid response format. Please try again.");
     }
-    return output;
   }
 );

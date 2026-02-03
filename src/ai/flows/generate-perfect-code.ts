@@ -26,14 +26,19 @@ const prompt = ai.definePrompt({
   name: 'generatePerfectCodePrompt',
   model: 'googleai/gemini-1.5-pro',
   input: {schema: GeneratePerfectCodeInputSchema},
-  output: {schema: GeneratePerfectCodeOutputSchema},
   prompt: `Rewrite this code to be 100% perfect, optimized, secure, and clean.
 
   Original Code:
   '''
   {{code}}
   '''
-  `,
+
+  Respond with ONLY a valid JSON object matching this schema:
+  {
+    "perfectCode": "string",
+    "explanation": "string"
+  }
+  Do not include markdown code blocks or any other text.`,
 });
 
 const generatePerfectCodeFlow = ai.defineFlow(
@@ -43,8 +48,13 @@ const generatePerfectCodeFlow = ai.defineFlow(
     outputSchema: GeneratePerfectCodeOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    if (!output) throw new Error("AI failed to generate perfect code.");
-    return output;
+    const {text} = await prompt(input);
+    try {
+      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as GeneratePerfectCodeOutput;
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", text);
+      throw new Error("The AI returned an invalid response format. Please try again.");
+    }
   }
 );

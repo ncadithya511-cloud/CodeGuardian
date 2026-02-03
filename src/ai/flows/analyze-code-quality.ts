@@ -32,7 +32,6 @@ const prompt = ai.definePrompt({
   name: 'analyzeCodeQualityPrompt',
   model: 'googleai/gemini-1.5-pro',
   input: {schema: AnalyzeCodeQualityInputSchema},
-  output: {schema: AnalyzeCodeQualityOutputSchema},
   prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
   Calculate a Technical Debt Score (0-100), where 100 is perfect.
   Identify specific issues with clear titles, descriptions, and severity.
@@ -41,7 +40,19 @@ const prompt = ai.definePrompt({
   '''
   {{code}}
   '''
-  `,
+
+  Respond with ONLY a valid JSON object matching this schema:
+  {
+    "score": number,
+    "issues": [
+      {
+        "title": "string",
+        "detail": "string",
+        "severity": "High" | "Medium" | "Low"
+      }
+    ]
+  }
+  Do not include markdown code blocks or any other text.`,
 });
 
 const analyzeCodeQualityFlow = ai.defineFlow(
@@ -51,10 +62,14 @@ const analyzeCodeQualityFlow = ai.defineFlow(
     outputSchema: AnalyzeCodeQualityOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    if (!output) {
-      throw new Error("The AI returned an invalid response. Please try again.");
+    const {text} = await prompt(input);
+    try {
+      // Handle potential markdown formatting
+      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleaned) as AnalyzeCodeQualityOutput;
+    } catch (e) {
+      console.error("Failed to parse AI response as JSON:", text);
+      throw new Error("The AI returned an invalid response format. Please try again.");
     }
-    return output;
   }
 );
