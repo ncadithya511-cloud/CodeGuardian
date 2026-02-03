@@ -1,11 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating code documentation.
- *
- * - generateDocumentation - A function that handles the documentation generation process.
- * - GenerateDocumentationInput - The input type for the generateDocumentation function.
- * - GenerateDocumentationOutput - The return type for the generateDocumentation function.
+ * @fileOverview An AI agent for generating code documentation using Gemini 1.5 Pro.
  */
 
 import {ai} from '@/ai/genkit';

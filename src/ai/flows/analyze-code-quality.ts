@@ -52,7 +52,9 @@ const analyzeCodeQualityFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    if (!output) throw new Error("AI failed to generate a quality analysis.");
+    if (!output) {
+      throw new Error("The AI returned an invalid response. Please try again.");
+    }
     return output;
   }
 );

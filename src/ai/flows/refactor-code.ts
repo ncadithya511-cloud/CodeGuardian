@@ -1,11 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for refactoring code.
- *
- * - refactorCode - A function that handles the code refactoring process.
- * - RefactorCodeInput - The input type for the refactorCode function.
- * - RefactorCodeOutput - The return type for the refactorCode function.
+ * @fileOverview An AI agent for refactoring code using Gemini 1.5 Pro.
  */
 
 import {ai} from '@/ai/genkit';

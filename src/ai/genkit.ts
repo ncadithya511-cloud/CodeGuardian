@@ -5,5 +5,9 @@ import {googleAI} from '@genkit-ai/google-genai';
 // in the environment variables.
 
 export const ai = genkit({
-  plugins: [googleAI()],
+  plugins: [
+    googleAI({
+      apiVersion: 'v1',
+    }),
+  ],
 });
