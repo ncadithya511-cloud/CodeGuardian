@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating code documentation using Gemini 1.5 Pro.
+ * @fileOverview An AI agent for generating code documentation using hardcoded gemini-pro.
  */
 
 import {ai} from '@/ai/genkit';
@@ -13,42 +13,33 @@ const GenerateDocumentationInputSchema = z.object({
 export type GenerateDocumentationInput = z.infer<typeof GenerateDocumentationInputSchema>;
 
 const GenerateDocumentationOutputSchema = z.object({
-  documentedCode: z.string().describe('The code block with added JSDoc/TSDoc documentation.'),
-  explanation: z.string().describe('A summary of the documentation changes made.'),
+  documentedCode: z.string(),
+  explanation: z.string(),
 });
 export type GenerateDocumentationOutput = z.infer<typeof GenerateDocumentationOutputSchema>;
 
 export async function generateDocumentation(input: GenerateDocumentationInput): Promise<GenerateDocumentationOutput> {
-  // HARDCODED MODEL AND DIRECT GENERATION
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-pro',
-    prompt: `You are an AI specialized in technical writing and software documentation. 
-    Your task is to take the provided code block and add comprehensive, professional-grade documentation (JSDoc for JavaScript, TSDoc for TypeScript).
+    model: 'googleai/gemini-pro',
+    prompt: `You are an AI specialized in technical writing. Add professional documentation (JSDoc/TSDoc) to the code.
 
-    Guidelines:
-    - Document all functions, classes, and exported constants.
-    - Include descriptions, @param tags with types and descriptions, @returns tags, and @throws tags where applicable.
-    - Ensure the documentation is clear, accurate, and follows industry standard conventions.
-    - Do not change the underlying logic of the code.
+    Code Block:
+    '''
+    ${input.code}
+    '''
 
     Respond with ONLY a valid JSON object matching this schema:
     {
       "documentedCode": "string",
       "explanation": "string"
     }
-    Do not include markdown code blocks or any other text.
-
-    Code Block:
-    '''
-    ${input.code}
-    '''`,
+    Do not include markdown code blocks or any other text.`,
   });
 
   try {
     const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(cleaned) as GenerateDocumentationOutput;
   } catch (e) {
-    console.error("Failed to parse AI response as JSON:", text);
     throw new Error("The AI returned an invalid response format. Please try again.");
   }
 }

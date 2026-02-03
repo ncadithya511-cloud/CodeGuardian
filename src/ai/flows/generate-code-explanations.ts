@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent using Gemini 1.5 Pro.
+ * @fileOverview A code explanation AI agent using hardcoded gemini-pro.
  */
 
 import {ai} from '@/ai/genkit';
@@ -19,10 +19,9 @@ const GenerateCodeExplanationsOutputSchema = z.object({
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
 export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
-  // HARDCODED MODEL AND DIRECT GENERATION
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-pro',
-    prompt: `Explain the refactoring suggestions for this code in a way that is easy for developers to understand.
+    model: 'googleai/gemini-pro',
+    prompt: `Explain the refactoring suggestions for this code.
 
     Code:
     ${input.code}
@@ -41,7 +40,6 @@ export async function generateCodeExplanations(input: GenerateCodeExplanationsIn
     const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(cleaned) as GenerateCodeExplanationsOutput;
   } catch (e) {
-    console.error("Failed to parse AI response as JSON:", text);
     throw new Error("The AI returned an invalid response format. Please try again.");
   }
 }
