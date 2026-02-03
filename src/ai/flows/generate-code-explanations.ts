@@ -1,28 +1,20 @@
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent.
- *
- * - generateCodeExplanations - A function that handles the code explanation process.
- * - GenerateCodeExplanationsInput - The input type for the generateCodeExplanations function.
- * - GenerateCodeExplanationsOutput - The return type for the generateCodeExplanations function.
+ * @fileOverview A code explanation AI agent using Gemini 1.5 Pro.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateCodeExplanationsInputSchema = z.object({
-  code: z
-    .string()
-    .describe("The code block to be explained."),
-  analysis: z
-    .string()
-    .describe('The analysis of the code block, including potential issues.'),
+  code: z.string(),
+  analysis: z.string(),
 });
 export type GenerateCodeExplanationsInput = z.infer<typeof GenerateCodeExplanationsInputSchema>;
 
 const GenerateCodeExplanationsOutputSchema = z.object({
-  explanation: z.string().describe('A human-readable explanation of the refactoring suggestions.'),
+  explanation: z.string(),
 });
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
@@ -35,17 +27,10 @@ const prompt = ai.definePrompt({
   model: 'googleai/gemini-1.5-pro',
   input: {schema: GenerateCodeExplanationsInputSchema},
   output: {schema: GenerateCodeExplanationsOutputSchema},
-  prompt: `You are an AI assistant that helps developers understand code refactoring suggestions.
-  Given a code block and its analysis, your task is to generate a human-readable explanation of the refactoring suggestions.
-  The explanation should be clear, concise, and easy to understand for developers of all skill levels.
+  prompt: `Explain the refactoring suggestions for this code in a way that is easy for developers to understand.
 
-  Respond with ONLY a valid JSON object that conforms to the output schema.
-  Do not include any other text or markdown formatting.
-
-  Code Block:
-  '''
+  Code:
   {{code}}
-  '''
 
   Analysis:
   {{analysis}}
@@ -60,9 +45,7 @@ const generateCodeExplanationsFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    if (!output) {
-      throw new Error("The AI returned an invalid response. Please try again.");
-    }
+    if (!output) throw new Error("AI failed to generate an explanation.");
     return output;
   }
 );

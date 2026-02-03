@@ -1,26 +1,20 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating "perfect" code.
- *
- * - generatePerfectCode - A function that handles the perfect code generation process.
- * - GeneratePerfectCodeInput - The input type for the generatePerfectCode function.
- * - GeneratePerfectCodeOutput - The return type for the generatePerfectCode function.
+ * @fileOverview An AI agent for generating flawless code using Gemini 1.5 Pro.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GeneratePerfectCodeInputSchema = z.object({
-  code: z
-    .string()
-    .describe("The code block to be made perfect."),
+  code: z.string(),
 });
 export type GeneratePerfectCodeInput = z.infer<typeof GeneratePerfectCodeInputSchema>;
 
 const GeneratePerfectCodeOutputSchema = z.object({
-  perfectCode: z.string().describe('The 100% perfect version of the code.'),
-  explanation: z.string().describe('A detailed explanation of why this new code is perfect.')
+  perfectCode: z.string(),
+  explanation: z.string(),
 });
 export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutputSchema>;
 
@@ -33,20 +27,9 @@ const prompt = ai.definePrompt({
   model: 'googleai/gemini-1.5-pro',
   input: {schema: GeneratePerfectCodeInputSchema},
   output: {schema: GeneratePerfectCodeOutputSchema},
-  prompt: `You are a world-class principal software engineer with decades of experience in writing flawless, production-grade code. You have an impeccable eye for detail and an obsession with optimization.
+  prompt: `Rewrite this code to be 100% perfect, optimized, secure, and clean.
 
-  Given the following code block, your task is to rewrite it to be 100% perfect.
-  This "perfect" version must be superior in every conceivable way:
-  - Peak performance and algorithmic efficiency.
-  - Bulletproof security and robust error handling.
-  - Unparalleled readability, maintainability, and scalability.
-  - Adherence to all modern best practices and conventions.
-  - Include comprehensive documentation via comments.
-
-  Respond with ONLY a valid JSON object that conforms to the output schema.
-  Do not include any other text or markdown formatting.
-
-  Original Code Block:
+  Original Code:
   '''
   {{code}}
   '''
@@ -61,9 +44,7 @@ const generatePerfectCodeFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    if (!output) {
-      throw new Error("The AI returned an invalid response. Please try again.");
-    }
+    if (!output) throw new Error("AI failed to generate perfect code.");
     return output;
   }
 );
