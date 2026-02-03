@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview An AI security expert.
+ * @fileOverview An AI security expert using Vertex AI for Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -20,8 +21,8 @@ export type SecurityAnalysisOutput = z.infer<typeof SecurityAnalysisOutputSchema
 
 export async function securityAnalysis(input: { code: string }): Promise<SecurityAnalysisOutput> {
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
-    prompt: `Perform a deep security audit on the following code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
+    model: 'vertexai/gemini-1.5-flash',
+    prompt: `Perform a deep security audit on the following code. Identify vulnerabilities (SQLi, XSS, insecure dependencies, etc.) and provide corresponding CWE IDs.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:
     {

@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview An AI agent for refactoring code.
+ * @fileOverview An AI agent for refactoring code using Vertex AI for Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -16,9 +17,9 @@ export type RefactorCodeOutput = z.infer<typeof RefactorCodeOutputSchema>;
 
 export async function refactorCode(input: { code: string, analysis: string }): Promise<RefactorCodeOutput> {
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
+    model: 'vertexai/gemini-1.5-flash',
     prompt: `You are an expert software engineer specializing in code refactoring.
-    Given a code block and an analysis of its issues, refactor the code to address the problems.
+    Given a code block and an analysis of its issues, refactor the code to address the problems while maintaining functional parity.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:
     {

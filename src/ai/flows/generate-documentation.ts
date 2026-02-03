@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview An AI agent for generating code documentation.
+ * @fileOverview An AI agent for generating code documentation using Vertex AI for Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -16,7 +17,7 @@ export type GenerateDocumentationOutput = z.infer<typeof GenerateDocumentationOu
 
 export async function generateDocumentation(input: { code: string }): Promise<GenerateDocumentationOutput> {
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
+    model: 'vertexai/gemini-1.5-flash',
     prompt: `You are an AI specialized in technical writing and software engineering documentation. 
     Your task is to add professional documentation (JSDoc for JavaScript or TSDoc for TypeScript) to the provided code block.
     

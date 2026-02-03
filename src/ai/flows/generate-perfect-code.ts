@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview An AI agent for generating flawless code.
+ * @fileOverview An AI agent for generating flawless code using Vertex AI for Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -16,8 +17,8 @@ export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutput
 
 export async function generatePerfectCode(input: { code: string }): Promise<GeneratePerfectCodeOutput> {
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
-    prompt: `Rewrite the following code to be 100% perfect, optimized, secure, and clean.
+    model: 'vertexai/gemini-1.5-flash',
+    prompt: `Rewrite the following code to be 100% perfect, optimized, secure, and clean. Follow industry best practices.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:
     {

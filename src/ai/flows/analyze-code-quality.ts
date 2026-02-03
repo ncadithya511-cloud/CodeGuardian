@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview An AI agent for analyzing code quality.
+ * @fileOverview An AI agent for analyzing code quality using Vertex AI for Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -20,7 +21,7 @@ export type AnalyzeCodeQualityOutput = z.infer<typeof AnalyzeCodeQualityOutputSc
 
 export async function analyzeCodeQuality(input: { code: string }): Promise<AnalyzeCodeQualityOutput> {
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
+    model: 'vertexai/gemini-1.5-flash',
     prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
     Calculate a Technical Debt Score (0-100), where 100 is perfect.
     Identify specific issues with clear titles, descriptions, and severity.

@@ -1,7 +1,8 @@
+
 'use server';
 
 /**
- * @fileOverview A code explanation AI agent.
+ * @fileOverview A code explanation AI agent using Vertex AI for Firebase.
  */
 
 import { ai } from '@/ai/genkit';
@@ -15,8 +16,8 @@ export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanat
 
 export async function generateCodeExplanations(input: { code: string, analysis: string }): Promise<GenerateCodeExplanationsOutput> {
   const { text } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
-    prompt: `Explain the refactoring suggestions for this code based on the provided analysis.
+    model: 'vertexai/gemini-1.5-flash',
+    prompt: `Explain the refactoring suggestions for this code based on the provided analysis. Use clear, concise language.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:
     {
