@@ -19,41 +19,29 @@ const GenerateCodeExplanationsOutputSchema = z.object({
 export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanationsOutputSchema>;
 
 export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
-  return generateCodeExplanationsFlow(input);
-}
+  // HARDCODED MODEL AND DIRECT GENERATION
+  const { text } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
+    prompt: `Explain the refactoring suggestions for this code in a way that is easy for developers to understand.
 
-const prompt = ai.definePrompt({
-  name: 'generateCodeExplanationsPrompt',
-  model: 'googleai/gemini-1.5-pro', // HARDCODED
-  input: {schema: GenerateCodeExplanationsInputSchema},
-  prompt: `Explain the refactoring suggestions for this code in a way that is easy for developers to understand.
+    Code:
+    ${input.code}
 
-  Code:
-  {{code}}
+    Analysis:
+    ${input.analysis}
 
-  Analysis:
-  {{analysis}}
-
-  Respond with ONLY a valid JSON object matching this schema:
-  {
-    "explanation": "string"
-  }
-  Do not include markdown code blocks or any other text.`,
-});
-
-const generateCodeExplanationsFlow = ai.defineFlow(
-  {
-    name: 'generateCodeExplanationsFlow',
-    inputSchema: GenerateCodeExplanationsInputSchema,
-  },
-  async input => {
-    const {text} = await prompt(input);
-    try {
-      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned) as GenerateCodeExplanationsOutput;
-    } catch (e) {
-      console.error("Failed to parse AI response as JSON:", text);
-      throw new Error("The AI returned an invalid response format. Please try again.");
+    Respond with ONLY a valid JSON object matching this schema:
+    {
+      "explanation": "string"
     }
+    Do not include markdown code blocks or any other text.`,
+  });
+
+  try {
+    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned) as GenerateCodeExplanationsOutput;
+  } catch (e) {
+    console.error("Failed to parse AI response as JSON:", text);
+    throw new Error("The AI returned an invalid response format. Please try again.");
   }
-);
+}

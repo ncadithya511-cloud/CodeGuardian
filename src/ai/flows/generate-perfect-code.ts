@@ -19,41 +19,29 @@ const GeneratePerfectCodeOutputSchema = z.object({
 export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutputSchema>;
 
 export async function generatePerfectCode(input: GeneratePerfectCodeInput): Promise<GeneratePerfectCodeOutput> {
-  return generatePerfectCodeFlow(input);
-}
+  // HARDCODED MODEL AND DIRECT GENERATION
+  const { text } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
+    prompt: `Rewrite this code to be 100% perfect, optimized, secure, and clean.
 
-const prompt = ai.definePrompt({
-  name: 'generatePerfectCodePrompt',
-  model: 'googleai/gemini-1.5-pro', // HARDCODED
-  input: {schema: GeneratePerfectCodeInputSchema},
-  prompt: `Rewrite this code to be 100% perfect, optimized, secure, and clean.
+    Original Code:
+    '''
+    ${input.code}
+    '''
 
-  Original Code:
-  '''
-  {{code}}
-  '''
-
-  Respond with ONLY a valid JSON object matching this schema:
-  {
-    "perfectCode": "string",
-    "explanation": "string"
-  }
-  Do not include markdown code blocks or any other text.`,
-});
-
-const generatePerfectCodeFlow = ai.defineFlow(
-  {
-    name: 'generatePerfectCodeFlow',
-    inputSchema: GeneratePerfectCodeInputSchema,
-  },
-  async input => {
-    const {text} = await prompt(input);
-    try {
-      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned) as GeneratePerfectCodeOutput;
-    } catch (e) {
-      console.error("Failed to parse AI response as JSON:", text);
-      throw new Error("The AI returned an invalid response format. Please try again.");
+    Respond with ONLY a valid JSON object matching this schema:
+    {
+      "perfectCode": "string",
+      "explanation": "string"
     }
+    Do not include markdown code blocks or any other text.`,
+  });
+
+  try {
+    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned) as GeneratePerfectCodeOutput;
+  } catch (e) {
+    console.error("Failed to parse AI response as JSON:", text);
+    throw new Error("The AI returned an invalid response format. Please try again.");
   }
-);
+}

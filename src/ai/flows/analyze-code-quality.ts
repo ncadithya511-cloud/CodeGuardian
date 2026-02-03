@@ -2,6 +2,10 @@
 
 /**
  * @fileOverview An AI agent for analyzing code quality using Gemini 1.5 Pro.
+ * 
+ * - analyzeCodeQuality - A function that handles the code analysis process.
+ * - AnalyzeCodeQualityInput - The input type for the analyzeCodeQuality function.
+ * - AnalyzeCodeQualityOutput - The return type for the analyzeCodeQuality function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -23,49 +27,37 @@ const AnalyzeCodeQualityOutputSchema = z.object({
 export type AnalyzeCodeQualityOutput = z.infer<typeof AnalyzeCodeQualityOutputSchema>;
 
 export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promise<AnalyzeCodeQualityOutput> {
-  return analyzeCodeQualityFlow(input);
-}
+  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
+  const { text } = await ai.generate({
+    model: 'googleai/gemini-1.5-pro',
+    prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
+    Calculate a Technical Debt Score (0-100), where 100 is perfect.
+    Identify specific issues with clear titles, descriptions, and severity.
 
-const prompt = ai.definePrompt({
-  name: 'analyzeCodeQualityPrompt',
-  model: 'googleai/gemini-1.5-pro', // HARDCODED
-  input: {schema: AnalyzeCodeQualityInputSchema},
-  prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
-  Calculate a Technical Debt Score (0-100), where 100 is perfect.
-  Identify specific issues with clear titles, descriptions, and severity.
+    Code:
+    '''
+    ${input.code}
+    '''
 
-  Code:
-  '''
-  {{code}}
-  '''
-
-  Respond with ONLY a valid JSON object matching this schema:
-  {
-    "score": number,
-    "issues": [
-      {
-        "title": "string",
-        "detail": "string",
-        "severity": "High" | "Medium" | "Low"
-      }
-    ]
-  }
-  Do not include markdown code blocks or any other text.`,
-});
-
-const analyzeCodeQualityFlow = ai.defineFlow(
-  {
-    name: 'analyzeCodeQualityFlow',
-    inputSchema: AnalyzeCodeQualityInputSchema,
-  },
-  async input => {
-    const {text} = await prompt(input);
-    try {
-      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
-      return JSON.parse(cleaned) as AnalyzeCodeQualityOutput;
-    } catch (e) {
-      console.error("Failed to parse AI response as JSON:", text);
-      throw new Error("The AI returned an invalid response format. Please try again.");
+    Respond with ONLY a valid JSON object matching this schema:
+    {
+      "score": number,
+      "issues": [
+        {
+          "title": "string",
+          "detail": "string",
+          "severity": "High" | "Medium" | "Low"
+        }
+      ]
     }
+    Do not include markdown code blocks or any other text.`,
+  });
+
+  try {
+    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleaned) as AnalyzeCodeQualityOutput;
+  } catch (e) {
+    console.error("Failed to parse AI response as JSON:", text);
+    throw new Error("The AI returned an invalid response format. Please try again.");
   }
-);
+}
