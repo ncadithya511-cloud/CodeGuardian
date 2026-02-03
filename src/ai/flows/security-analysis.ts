@@ -36,7 +36,7 @@ export async function securityAnalysis(input: SecurityAnalysisInput): Promise<Se
 
 const prompt = ai.definePrompt({
   name: 'securityAnalysisPrompt',
-  model: 'googleai/gemini-1.5-flash',
+  model: 'googleai/gemini-1.5-pro',
   input: {schema: SecurityAnalysisInputSchema},
   output: {schema: SecurityAnalysisOutputSchema},
   prompt: `You are a world-class cybersecurity expert and principal software engineer with a specialization in application security (AppSec). You have a deep understanding of the OWASP Top 10, CWE, and common attack vectors.

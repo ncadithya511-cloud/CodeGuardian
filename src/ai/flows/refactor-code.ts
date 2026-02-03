@@ -33,7 +33,7 @@ export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCo
 
 const prompt = ai.definePrompt({
   name: 'refactorCodePrompt',
-  model: 'googleai/gemini-1.5-flash',
+  model: 'googleai/gemini-1.5-pro',
   input: {schema: RefactorCodeInputSchema},
   output: {schema: RefactorCodeOutputSchema},
   prompt: `You are an expert software engineer specializing in code refactoring and optimization.

@@ -28,7 +28,7 @@ export async function generateDocumentation(input: GenerateDocumentationInput): 
 
 const prompt = ai.definePrompt({
   name: 'generateDocumentationPrompt',
-  model: 'googleai/gemini-1.5-flash',
+  model: 'googleai/gemini-1.5-pro',
   input: {schema: GenerateDocumentationInputSchema},
   output: {schema: GenerateDocumentationOutputSchema},
   prompt: `You are an AI specialized in technical writing and software documentation. 
