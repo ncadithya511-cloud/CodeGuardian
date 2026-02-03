@@ -32,6 +32,7 @@ export async function generateCodeExplanations(input: GenerateCodeExplanationsIn
 
 const prompt = ai.definePrompt({
   name: 'generateCodeExplanationsPrompt',
+  model: 'googleai/gemini-1.5-flash',
   input: {schema: GenerateCodeExplanationsInputSchema},
   output: {schema: GenerateCodeExplanationsOutputSchema},
   prompt: `You are an AI assistant that helps developers understand code refactoring suggestions.
@@ -42,9 +43,9 @@ const prompt = ai.definePrompt({
   Do not include any other text or markdown formatting.
 
   Code Block:
-  \'\'\'
+  '''
   {{code}}
-  \'\'\'
+  '''
 
   Analysis:
   {{analysis}}

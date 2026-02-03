@@ -34,6 +34,7 @@ export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promis
 
 const prompt = ai.definePrompt({
   name: 'analyzeCodeQualityPrompt',
+  model: 'googleai/gemini-1.5-flash',
   input: {schema: AnalyzeCodeQualityInputSchema},
   output: {schema: AnalyzeCodeQualityOutputSchema},
   prompt: `You are an expert software engineer and code quality analyzer. Your task is to analyze the provided code snippet and calculate a "Technical Debt Score" from 0 to 100, where 100 is a perfect, debt-free code.
@@ -53,9 +54,9 @@ const prompt = ai.definePrompt({
   Respond with ONLY a valid JSON object that conforms to the output schema. Do not include any other text or markdown formatting.
 
   Code Block to Analyze:
-  \'\'\'
+  '''
   {{code}}
-  \'\'\'
+  '''
   `,
 });
 
