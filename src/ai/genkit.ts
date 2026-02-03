@@ -1,13 +1,20 @@
-
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 
 /**
  * Genkit instance configured for Google AI (Gemini).
- * Using v1beta API as it is more reliable for Gemini 1.5 models in this environment.
+ * Using singleton pattern to prevent multiple initializations during Next.js hot-reloads.
  */
-export const ai = genkit({
+const aiConfig = {
   plugins: [
     googleAI({ apiVersion: 'v1beta' }),
   ],
-});
+};
+
+const globalForGenkit = global as unknown as { ai: ReturnType<typeof genkit> };
+
+export const ai = globalForGenkit.ai || genkit(aiConfig);
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForGenkit.ai = ai;
+}

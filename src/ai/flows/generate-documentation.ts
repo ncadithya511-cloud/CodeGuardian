@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -7,7 +6,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const GenerateDocumentationInputSchema = z.object({
   code: z.string().describe("The code block to generate documentation for."),
@@ -22,10 +20,7 @@ export type GenerateDocumentationOutput = z.infer<typeof GenerateDocumentationOu
 
 export async function generateDocumentation(input: GenerateDocumentationInput): Promise<GenerateDocumentationOutput> {
   const { text } = await ai.generate({
-    model: googleAI.model('gemini-1.5-flash'),
-    config: {
-      apiVersion: 'v1beta',
-    },
+    model: 'googleai/gemini-1.5-flash',
     prompt: `You are an AI specialized in technical writing and software engineering documentation. 
     Your task is to add professional documentation (JSDoc for JavaScript or TSDoc for TypeScript) to the provided code block.
     

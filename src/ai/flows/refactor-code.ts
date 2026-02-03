@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -7,7 +6,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const RefactorCodeInputSchema = z.object({
   code: z.string(),
@@ -23,7 +21,7 @@ export type RefactorCodeOutput = z.infer<typeof RefactorCodeOutputSchema>;
 
 export async function refactorCode(input: RefactorCodeInput): Promise<RefactorCodeOutput> {
   const { text } = await ai.generate({
-    model: googleAI.model('gemini-1.5-flash'),
+    model: 'googleai/gemini-1.5-flash',
     prompt: `You are an expert software engineer specializing in code refactoring.
     Given a code block and an analysis of its issues, refactor the code to address the problems.
 

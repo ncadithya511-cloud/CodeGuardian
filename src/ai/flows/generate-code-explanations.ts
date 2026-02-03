@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -7,7 +6,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const GenerateCodeExplanationsInputSchema = z.object({
   code: z.string(),
@@ -22,7 +20,7 @@ export type GenerateCodeExplanationsOutput = z.infer<typeof GenerateCodeExplanat
 
 export async function generateCodeExplanations(input: GenerateCodeExplanationsInput): Promise<GenerateCodeExplanationsOutput> {
   const { text } = await ai.generate({
-    model: googleAI.model('gemini-1.5-flash'),
+    model: 'googleai/gemini-1.5-flash',
     prompt: `Explain the refactoring suggestions for this code based on the provided analysis.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:

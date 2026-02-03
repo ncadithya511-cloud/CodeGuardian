@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -7,7 +6,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const GeneratePerfectCodeInputSchema = z.object({
   code: z.string(),
@@ -22,7 +20,7 @@ export type GeneratePerfectCodeOutput = z.infer<typeof GeneratePerfectCodeOutput
 
 export async function generatePerfectCode(input: GeneratePerfectCodeInput): Promise<GeneratePerfectCodeOutput> {
   const { text } = await ai.generate({
-    model: googleAI.model('gemini-1.5-flash'),
+    model: 'googleai/gemini-1.5-flash',
     prompt: `Rewrite the following code to be 100% perfect, optimized, secure, and clean.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:

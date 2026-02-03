@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -7,7 +6,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const AnalyzeCodeQualityInputSchema = z.object({
   code: z.string().describe("The code block to be analyzed."),
@@ -25,9 +23,8 @@ const AnalyzeCodeQualityOutputSchema = z.object({
 export type AnalyzeCodeQualityOutput = z.infer<typeof AnalyzeCodeQualityOutputSchema>;
 
 export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promise<AnalyzeCodeQualityOutput> {
-  // HARDCODED MODEL AND DIRECT GENERATION TO AVOID CONFIG ERRORS
   const { text } = await ai.generate({
-    model: googleAI.model('gemini-1.5-flash'),
+    model: 'googleai/gemini-1.5-flash',
     prompt: `You are an expert software architect. Analyze the provided code for quality, complexity, and maintainability.
     Calculate a Technical Debt Score (0-100), where 100 is perfect.
     Identify specific issues with clear titles, descriptions, and severity.
@@ -45,7 +42,6 @@ export async function analyzeCodeQuality(input: AnalyzeCodeQualityInput): Promis
   });
 
   try {
-    // Robust manual extraction of JSON from text response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error("No JSON found in response");
     const parsed = JSON.parse(jsonMatch[0]);

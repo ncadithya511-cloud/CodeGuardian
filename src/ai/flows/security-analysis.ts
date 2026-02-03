@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -7,7 +6,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { googleAI } from '@genkit-ai/google-genai';
 
 const SecurityAnalysisInputSchema = z.object({
   code: z.string(),
@@ -26,7 +24,7 @@ export type SecurityAnalysisOutput = z.infer<typeof SecurityAnalysisOutputSchema
 
 export async function securityAnalysis(input: SecurityAnalysisInput): Promise<SecurityAnalysisOutput> {
   const { text } = await ai.generate({
-    model: googleAI.model('gemini-1.5-flash'),
+    model: 'googleai/gemini-1.5-flash',
     prompt: `Perform a deep security audit on the following code. Identify vulnerabilities (SQLi, XSS, etc.) and provide CWE IDs.
 
     IMPORTANT: Your response must be a single, valid JSON object matching this structure:
